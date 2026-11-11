@@ -56,12 +56,14 @@ export const PACKS: Record<string, Pack[]> = {
   pod: [
     { id: "pod-record", name: "Recorded podcast", best: "We bring the full set to your venue and record the episode.", price: 2500, per: "up to 2 hours", alt: "Full day AED 4,500",
       visual: { kind: "files", img: "/img/pod.jpg" },
-      gets: [{ v: "Set", t: "3 cameras, 4 Shure MV7+ mics and lights, set up and packed away" }, { v: "3", t: "Camera angles in 4K, each as its own file" },
-        { v: "4", t: "Mic tracks, one per voice" }, { v: "48 hrs", t: "Every file by download link" }] },
+      gets: [{ v: "Set", t: "3 cameras, 4 Shure MV7+ mics and lights, set up and packed away" }, { v: "Cut", t: "Program cut: the switched multi-camera version" },
+        { v: "3", t: "Recordings, one from each camera, in 4K" }, { v: "4", t: "Separate audio files, one per mic (WAV)" },
+        { v: "Mix", t: "Mixed audio file, all voices balanced (WAV and MP3)" }, { v: "48 hrs", t: "Every file by download link" }] },
     { id: "pod-live", name: "Live podcast", best: "The same set, streamed live while you record.", price: 3300, per: "up to 2 hours", alt: "Full day AED 5,300", popular: true,
       visual: { kind: "stream", img: "/img/pod.jpg" },
-      gets: [{ v: "Live", t: "On YouTube and Facebook as you record" }, { v: "3", t: "Camera angles, switched live by our producer" },
-        { v: "Set", t: "4 Shure MV7+ mics and lights, set up and packed away" }, { v: "48 hrs", t: "Full recording, plus every camera and mic file" }] },
+      gets: [{ v: "Live", t: "On YouTube and Facebook as you record, switched live by our producer" }, { v: "Set", t: "3 cameras, 4 Shure MV7+ mics and lights, set up and packed away" },
+        { v: "Cut", t: "Program cut: the switched version of the stream" }, { v: "3", t: "Recordings, one from each camera, in 4K" },
+        { v: "Audio", t: "Separate audio per mic (WAV), plus a mixed file (WAV and MP3)" }, { v: "48 hrs", t: "Every file by download link" }] },
   ],
 };
 // Podcast extras, grouped. Prices match the booking engine (gear day rates, crew rates, editing prices).
