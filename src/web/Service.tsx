@@ -2,7 +2,7 @@ import { I, addonIcon } from "./Icons";
 import { CtaBand, Faq, Page, link } from "./Layout";
 import { Theatre } from "./Home";
 import C from "./content.json";
-import { PACKS, POD_EXTRAS, LIVE_EXTRAS } from "./packages";
+import { PACKS, POD_EXTRAS, LIVE_EXTRAS, VIDEO_EXTRAS } from "./packages";
 import { Deliverable } from "./Deliverable";
 import { CrewAddons } from "./Crew";
 
@@ -37,10 +37,10 @@ export function Service({ id }: { id: string }) {
         {id !== "live" && <p className="fs-packnote">Want something different? Build your own when you book, or <a href="/estimate" onClick={link("/estimate")}>get an estimate</a>.</p>}
       </div></section>
 
-      {id === "pod" || id === "live" ? <section className="fs-sec alt"><div className="fs-wrap">
+      {id === "pod" || id === "live" || id === "video" ? <section className="fs-sec alt"><div className="fs-wrap">
         <h2 className="fs-h2">Add-ons</h2>
         <p className="fs-sub">Add any of these when you book.</p>
-        <div className={"ax-grid n" + (id === "live" ? LIVE_EXTRAS : POD_EXTRAS).length}>{(id === "live" ? LIVE_EXTRAS : POD_EXTRAS).map((g) => (
+        <div className={"ax-grid n" + (id === "live" ? LIVE_EXTRAS : id === "video" ? VIDEO_EXTRAS : POD_EXTRAS).length}>{(id === "live" ? LIVE_EXTRAS : id === "video" ? VIDEO_EXTRAS : POD_EXTRAS).map((g) => (
           <div key={g.name} className="ax">
             <div className="ax-ph"><img src={g.img} alt="" loading="lazy" style={g.pos ? { objectPosition: g.pos } : undefined} /><h3>{g.name}</h3></div>
             <ul>{g.items.map((it) => <li key={it.name}><span><b>{it.name}</b><small>{it.d}</small></span><em>{it.price}</em></li>)}</ul>

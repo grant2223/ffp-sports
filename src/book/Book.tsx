@@ -115,7 +115,7 @@ function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSen
   const nextTxt = st.step === 6 ? (sending ? "Sending…" : "Send booking request") : "Continue";
 
   const services = [...cat.services.map((s) => ({ id: s.id, name: s.name, strap: s.strap, img: s.img })), { id: "gear", name: "Gear rental", strap: "Cameras and kits, run it yourself", img: "/img/stadiumcam.jpg" }];
-  const durList: [Dur, string, string, number][] = pk ? [["2h", "2 hours", "One match or session", pk.price_2h], ["day", "Full day", "Up to 8 hours on site", pk.price_day]] : [];
+  const durList: [Dur, string, string, number][] = pk ? [["2h", "Up to 2 hours", "One match or session. Set-up time is free", pk.price_2h], ["day", "Full day", "Up to 8 hours. Set-up time is free", pk.price_day]] : [];
   if (pk && sv?.season) { const m = Number(cat.settings.season_matches || 10), off = Number(cat.settings.season_off || 0.15); durList.push(["season", "Season", `${m} matches, save ${Math.round(off * 100)}%`, pk.price_2h * m * (1 - off)]); }
   const addPrice = (e: (typeof adds)[number]) => (e.per_crew_hour ? Number(cat.settings.extra_hour_client || 750) * Math.max(1, p.crew) : st.dur === "day" ? e.price_day : e.price_2h);
   const qty = (id: string) => st.qty[id] || 0;
@@ -226,6 +226,7 @@ function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSen
               {crew && crewRoles.length > 0 && <div className="blk crw"><p className="ql">Extra crew<span className="cnote">{st.dur === "day" ? "Day rates" : st.dur === "season" ? "Per match" : "Up to 2 hours"}</span></p>
                 <input className="crw-add" list="crew-roles" placeholder="Search crew roles, e.g. camera operator" value="" onChange={(e) => { const r = crewRoles.find((x) => x.name === e.target.value); if (r) setCrew(r.id, 1); }} />
                 <datalist id="crew-roles">{crewRoles.filter((r) => !cq[r.id]).map((r) => <option key={r.id} value={r.name}>{cat.roleGroups.find((g) => g.id === r.group_id)?.name}</option>)}</datalist>
+                {pickedCrew.some((r) => r.group_id === "cameras" && r.id !== "camera-assistant") && <p className="cnote2">Camera operators come without a camera. Add a camera from the add-ons above.</p>}
                 {pickedCrew.map((r) => <div key={r.id} className="gq"><span className="qt"><b>{r.name}</b><i>{aed(roleRate(r))} each{st.dur === "season" ? " a match" : ""}</i></span>
                   <Stepper q={cq[r.id]} dec={() => setCrew(r.id, -1)} inc={() => setCrew(r.id, 1)} /></div>)}
               </div>}

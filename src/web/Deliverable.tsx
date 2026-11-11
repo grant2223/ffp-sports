@@ -17,6 +17,10 @@ export function Deliverable({ v }: { v: Visual }) {
       {v.bug && <span className="dv-bug"><b>HOME</b><i>12</i><i>7</i><b>AWAY</b><em>2H 34:10</em></span>}
       {v.cams && <div className="dv-cams">{v.cams.map((c, i) => <img key={i} src={c} alt="" loading="lazy" />)}</div>}</div>;
     case "season": return <div className="dv dv-season">{v.imgs.map((m, i) => <div key={i}><img src={m} alt="" loading="lazy" /><span>Match {i + 1}</span></div>)}<div className="dv-more2">+6 more</div></div>;
+    case "interview": return <div className="dv dv-pad"><div className="dv-film"><img src={v.img} alt="" loading="lazy" style={{ objectPosition: "center 25%" }} />
+      <span className="dv-l3"><b>{v.name}</b><i>{v.role}</i></span><span className="dv-dur">1:30</span></div></div>;
+    case "clips": return <div className="dv dv-pad dv-cl">{v.imgs.map((m, i) => <div key={i} className="dv-clip"><img src={m} alt="" loading="lazy" /><span className="dv-play sm">{I.play({ s: 12 })}</span><span className="dv-cap">{["GAME WINNER", "THE CROWD", "NEW PB", "FULL TIME"][i % 4]}</span></div>)}</div>;
+    case "stories": return <div className="dv dv-pad dv-st">{v.imgs.map((m, i) => <div key={i} className="dv-ph"><img src={m} alt="" loading="lazy" /><span className="dv-bars">{[0, 1, 2, 3].map((k) => <i key={k} className={k <= i ? "on" : ""} />)}</span><span className="dv-who">yourclub</span></div>)}</div>;
     case "files": return <div className="dv dv-pad dv-files"><div className="dv-angles">{[0, 1, 2].map((i) => <div key={i}><img src={v.img} alt="" loading="lazy" style={{ objectPosition: ["20% 50%", "50% 50%", "80% 50%"][i] }} /><span>Cam {i + 1}</span></div>)}</div>
       <div className="dv-tracks">{[0, 1, 2, 3].map((i) => <div key={i}><span>Mic {i + 1}</span><i style={{ width: [70, 88, 60, 80][i] + "%" }} /></div>)}</div></div>;
   }

@@ -35,6 +35,20 @@ for _m in _re.finditer(r"\('((?:live|pod)-a\d+)','(live|pod)','addon','([^']+)',
     F['extras'].append(dict(id=i, service_id=sv, kind='addon', name=n, strap=st, img='', price_2h=int(p2), price_day=int(pd), cost_2h=int(c2), cost_day=int(cd), per_crew_hour=False, adds_crew=0, pick_group=None, sort=int(so), active=True))
 for _e in F['extras']:
     if _e['id'] in ('live-a0', 'live-a1', 'live-a2', 'live-a3'): _e['active'] = False
+
+# mirror migration 0006
+_X = {e['id']: e for e in F['extras']}
+def _px(i, p, c): _X[i].update(price_2h=p, price_day=p, cost_2h=c, cost_day=c)
+_px('pod-e1', 750, 375); _px('pod-e2', 1500, 750); _px('video-e1', 1500, 750); _px('video-e3', 3500, 1750)
+_X['pod-a0']['name'] = 'Live podcast'
+for _i, _n, _p, _so, _img in [('video-e4', 'Interviews', 900, 2, '/img/b-8f0ec58048090ca3eb10fb0297b161d4.jpg'), ('video-e5', 'Social clips', 600, 3, '/img/fans.jpg'), ('video-e6', 'Live stories', 1000, 4, '/img/flag.jpg')]:
+    F['extras'].append(dict(id=_i, service_id='video', kind='edit_level', name=_n, strap='', img=_img, price_2h=_p, price_day=_p, cost_2h=_p/2, cost_day=_p/2, per_crew_hour=False, adds_crew=0, pick_group=None, sort=_so, active=True))
+_X['video-e2']['sort'] = 10; _X['video-e3']['sort'] = 11
+for _pk in F['packages']:
+    _pk['name'] = {'live-one': 'Single-camera set-up', 'live-three': '3-camera set-up', 'pod-pod': 'Podcast set-up', 'video-video': 'Videographer', 'photo-photo': 'Photographer'}.get(_pk['id'], _pk['name'])
+F['roles'].append(dict(id='national-commentator', group_id='talent', name='Commentator, national level', client_day=8500, cost_day=5000, sort=29, active=True))
+F['role_rates'].append(dict(id='national-commentator', group_id='talent', name='Commentator, national level', client_day=8500, sort=29, active=True))
+F['service_roles'].append(dict(service_id='live', role_id='national-commentator', sort=29))
 sent = []
 
 def handle(route, req):
