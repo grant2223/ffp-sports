@@ -40,7 +40,7 @@ for _e in F['extras']:
 _X = {e['id']: e for e in F['extras']}
 def _px(i, p, c): _X[i].update(price_2h=p, price_day=p, cost_2h=c, cost_day=c)
 _px('pod-e1', 750, 375); _px('pod-e2', 1500, 750); _px('video-e1', 1500, 750); _px('video-e3', 3500, 1750)
-_X['pod-a0']['name'] = 'Live podcast'
+_X['pod-a0']['name'] = 'Live podcast'; _X['video-a0']['name'] = 'Interview set-up'
 for _i, _n, _p, _so, _img in [('video-e4', 'Interviews', 900, 2, '/img/b-8f0ec58048090ca3eb10fb0297b161d4.jpg'), ('video-e5', 'Social clips', 600, 3, '/img/fans.jpg'), ('video-e6', 'Live stories', 1000, 4, '/img/flag.jpg')]:
     F['extras'].append(dict(id=_i, service_id='video', kind='edit_level', name=_n, strap='', img=_img, price_2h=_p, price_day=_p, cost_2h=_p/2, cost_day=_p/2, per_crew_hour=False, adds_crew=0, pick_group=None, sort=_so, active=True))
 _X['video-e2']['sort'] = 10; _X['video-e3']['sort'] = 11

@@ -32,3 +32,4 @@ update extras set strap = 'A team photo and lit portraits of up to 25 players' w
 -- National commentator rate
 insert into roles(id, group_id, name, client_day, cost_day, sort, active) values ('national-commentator', 'talent', 'Commentator, national level', 8500, 5000, 29, true);
 insert into service_roles(service_id, role_id, sort) values ('live', 'national-commentator', 29);
+update extras set name = 'Interview set-up' where id = 'video-a0';
