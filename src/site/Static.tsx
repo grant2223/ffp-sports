@@ -1,7 +1,6 @@
+import { Nav, Footer } from "../web/Layout";
 import { useEffect, useRef } from "react";
 import { interceptLinks } from "../lib/router";
-import top from "./pages/chrome-top.html?raw";
-import foot from "./pages/chrome-foot.html?raw";
 
 // The approved page designs, exported as HTML. This wires up their few behaviours: the menu,
 // the livestream player rail, the talent filters, and in-app links.
@@ -49,13 +48,11 @@ export function StaticPage({ html, cls }: { html: string; cls?: string }) {
 
 // Header, menu and footer for the app pages (booking, estimate, legal).
 export function Shell({ children, cls = "pg-book", footer = true }: { children: React.ReactNode; cls?: string; footer?: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => (ref.current ? wire(ref.current) : undefined), []);
   return (
-    <div ref={ref} className={cls} onClick={interceptLinks} style={{ fontFamily: "Montserrat, Arial, sans-serif", color: "#0f1720", background: "#ffffff", WebkitFontSmoothing: "antialiased", minHeight: "100vh" }}>
-      <div dangerouslySetInnerHTML={{ __html: top }} />
-      {children}
-      {footer && <div dangerouslySetInnerHTML={{ __html: foot }} />}
+    <div className="fs">
+      <Nav />
+      <div className={cls} onClick={interceptLinks} style={{ fontFamily: "Montserrat, Arial, sans-serif", color: "#0f1720", background: "#ffffff", WebkitFontSmoothing: "antialiased", minHeight: "70vh" }}>{children}</div>
+      {footer && <Footer />}
     </div>
   );
 }

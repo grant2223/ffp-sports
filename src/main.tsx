@@ -10,5 +10,6 @@ import "@fontsource/montserrat/latin-800-italic.css";
 import "./site/base.css";
 import "./site/home.css";
 import "./site/book.css";
+import "./web/web.css";
 
 createRoot(document.getElementById("root")!).render(<StrictMode><App /></StrictMode>);

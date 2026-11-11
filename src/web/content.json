@@ -1,0 +1,764 @@
+{
+ "services": [
+  {
+   "id": "live",
+   "name": "Livestream",
+   "noun": "livestream",
+   "h1": "Your match, streamed live.",
+   "sub": "Fans, family and sponsors watch every match live, wherever they are.",
+   "hero": "/img/gfxplayer.jpg",
+   "heroAlt": "Rugby sevens livestream with a player stats graphic on screen",
+   "card": "Live on YouTube, Facebook and your website, with scores on screen.",
+   "baseLine": "In every livestream, on both packages.",
+   "pkgs": [
+    {
+     "name": "1 camera",
+     "line": "Club matches and single courts",
+     "img": "/img/stadiumcam.jpg",
+     "items": [
+      {
+       "t": "1 operator",
+       "d": "Sets up, runs the camera, stream and scoreboard, packs down."
+      },
+      {
+       "t": "Sony Z200 broadcast camera",
+       "d": "20x zoom, so it follows play from one spot."
+      },
+      {
+       "t": "YoloBox Ultra",
+       "d": "Streams, records and runs the graphics, with 4G internet built in."
+      },
+      {
+       "t": "DJI Mic 3 wireless microphones",
+       "d": "Ground sound, or a mic for a guest caller."
+      },
+      {
+       "t": "Live scoreboard",
+       "d": "Score, clock, team names and logos on screen all match."
+      },
+      {
+       "t": "Your sponsor logo",
+       "d": "On screen for the whole stream."
+      },
+      {
+       "t": "YouTube, Facebook and your website",
+       "d": "All at the same time. No viewer limit."
+      },
+      {
+       "t": "Full recording",
+       "d": "Download link within 24 hours."
+      },
+      {
+       "t": "Viewer report",
+       "d": "Total and peak viewers, to show sponsors."
+      }
+     ]
+    },
+    {
+     "name": "3 cameras",
+     "line": "Finals, tournaments and national events",
+     "img": "/img/desk.jpg",
+     "items": [
+      {
+       "t": "2 operators",
+       "d": "One directs the stream, one runs cameras and graphics."
+      },
+      {
+       "t": "3 wireless 4K cameras",
+       "d": "A wide, a close-up and a second angle, cut live."
+      },
+      {
+       "t": "YoloBox Extreme",
+       "d": "Cuts the cameras, streams and records, with 4G internet built in."
+      },
+      {
+       "t": "Commentary desk",
+       "d": "RODECaster mixer and 2 broadcast headsets."
+      },
+      {
+       "t": "Web graphics",
+       "d": "Scores and results pulled from your competition software."
+      },
+      {
+       "t": "Live scoreboard",
+       "d": "Score, clock, team names and logos on screen all match."
+      },
+      {
+       "t": "Your sponsor logo",
+       "d": "On screen for the whole stream."
+      },
+      {
+       "t": "YouTube, Facebook and your website",
+       "d": "All at the same time. No viewer limit."
+      },
+      {
+       "t": "Full recording and viewer report",
+       "d": "Recording within 24 hours, plus total and peak viewers."
+      }
+     ]
+    }
+   ],
+   "addons": [
+    {
+     "icon": "people",
+     "t": "Graphics and stats operator",
+     "d": "A dedicated person for custom graphics, live player stats and sponsor slides."
+    },
+    {
+     "icon": "cam",
+     "t": "Extra camera with operator",
+     "d": "A manned camera for close-ups, such as on the finish line or the bench."
+    },
+    {
+     "icon": "mic",
+     "t": "Commentator, club level",
+     "d": "Calls the match: names, scores and key moments."
+    },
+    {
+     "icon": "mic",
+     "t": "Commentator, national level",
+     "d": "An experienced broadcast commentator from FFP Talent."
+    },
+    {
+     "icon": "vertical",
+     "t": "Highlights reel",
+     "d": "A 60 to 90 second reel of the best moments, sized for Instagram and TikTok, within 48 hours."
+    },
+    {
+     "icon": "clock",
+     "t": "Extra hour",
+     "d": "More time on air when your event runs long."
+    }
+   ],
+   "faqs": [
+    {
+     "q": "Which package do I need?",
+     "a": "1 camera suits club matches and single courts. 3 cameras suits finals, tournaments and national events, and anything with commentary."
+    },
+    {
+     "q": "Can we book the whole season?",
+     "a": "Yes. Choose Season when you book: 10 matches, same crew, and 15% off every match."
+    },
+    {
+     "q": "Is it a national or international match?",
+     "a": "Book Full day. National and international matches need the full set-up and run time."
+    },
+    {
+     "q": "Where does the stream go?",
+     "a": "YouTube, Facebook and your website, all at once. We can stream to your own channel: add us as a manager or send your stream key."
+    },
+    {
+     "q": "Can the stream be private?",
+     "a": "Yes. We can stream unlisted, so only people with the link can watch."
+    },
+    {
+     "q": "Do we need internet at the venue?",
+     "a": "No. 4G internet is built into our kit. If the venue has a cable line, we use it as a backup."
+    },
+    {
+     "q": "What do we need to have ready?",
+     "a": "A power point within 20 metres of the camera spot, and access for our crew 60 minutes before start."
+    },
+    {
+     "q": "How do we get player graphics?",
+     "a": "Add your teams and players to the FFP app. It is free, and your stream then shows each player with photo, number and stats."
+    },
+    {
+     "q": "How do we add sponsor logos?",
+     "a": "Send your logos as PNG files at least 48 hours before. They go on the scoreboard and full-screen at breaks."
+    },
+    {
+     "q": "Can we use our own commentator?",
+     "a": "Yes. On the 3-camera package they plug a headset into our commentary desk. Or pick one of ours on the Talent page."
+    },
+    {
+     "q": "What if the match runs over time?",
+     "a": "Up to 30 minutes over is included. Longer is charged as an extra hour."
+    },
+    {
+     "q": "Do we keep the recording?",
+     "a": "Yes. The full recording is yours. Download link within 24 hours."
+    },
+    {
+     "q": "What about several courts or a multi-day tournament?",
+     "a": "Use Get an estimate. Tell us the days, courts and schedule, and the estimate is built straight away."
+    }
+   ]
+  },
+  {
+   "id": "video",
+   "name": "Video",
+   "noun": "video",
+   "h1": "Your match, on film.",
+   "sub": "4K footage of your match or event. Add a highlights film, interviews or social clips.",
+   "hero": "/img/poolcam.jpg",
+   "heroAlt": "Camera filming at a swimming championship",
+   "card": "Your match or event on film, in 4K.",
+   "baseLine": "Every video booking. Book 2 hours for one match, or a full day for an event.",
+   "pkgs": [
+    {
+     "name": "Video",
+     "line": "",
+     "img": "/img/poolcam.jpg",
+     "items": [
+      {
+       "t": "Pro videographer",
+       "d": "Sports specialist, on site the whole booking."
+      },
+      {
+       "t": "4K camera",
+       "d": "Cinema-quality footage you can crop and reuse."
+      },
+      {
+       "t": "Wireless microphones",
+       "d": "Clear sound for speeches and interviews."
+      },
+      {
+       "t": "Stabilised shots",
+       "d": "Smooth action from the sideline."
+      },
+      {
+       "t": "All your footage",
+       "d": "Download link within 48 hours."
+      },
+      {
+       "t": "Yours to use",
+       "d": "Post it anywhere, forever."
+      }
+     ]
+    }
+   ],
+   "addons": [
+    {
+     "icon": "scissors",
+     "t": "Highlights film",
+     "d": "A 2 to 3 minute film of the day, edited with music and titles, within 5 days."
+    },
+    {
+     "icon": "vertical",
+     "t": "Social clips",
+     "d": "5 vertical clips sized for Instagram, TikTok and Reels, within 48 hours."
+    },
+    {
+     "icon": "people",
+     "t": "Interviews",
+     "d": "Players and coaches, lit and miked, with your logo backdrop."
+    },
+    {
+     "icon": "person",
+     "t": "Second videographer",
+     "d": "A second specialist on every moment."
+    },
+    {
+     "icon": "clock",
+     "t": "Extra hour",
+     "d": "More filming time when the event runs long."
+    }
+   ],
+   "faqs": [
+    {
+     "q": "How long until I get my footage?",
+     "a": "All raw footage within 48 hours. Edited films within 5 days."
+    },
+    {
+     "q": "Is the footage edited?",
+     "a": "The booking includes all raw footage. Add a Highlights film or Social clips for edited videos."
+    },
+    {
+     "q": "What format do I get?",
+     "a": "4K MP4 files by download link. Social clips come in vertical format for Instagram, TikTok and Reels."
+    },
+    {
+     "q": "Can you film interviews on the day?",
+     "a": "Yes. Add Interviews and we set up a lit, miked spot with your logo backdrop."
+    },
+    {
+     "q": "Can I ask for changes to the edit?",
+     "a": "Yes, one round of changes is included on every edited film."
+    },
+    {
+     "q": "Do you add music?",
+     "a": "Yes. Edited films and clips use licensed music, safe for social media."
+    },
+    {
+     "q": "Who owns the video?",
+     "a": "You do. Post it anywhere, as often as you like."
+    },
+    {
+     "q": "What should I send before the day?",
+     "a": "The schedule, the key moments you want, and any people to interview."
+    },
+    {
+     "q": "Can you cover two things happening at once?",
+     "a": "Add a Second videographer so both are covered."
+    },
+    {
+     "q": "Do you film with drones?",
+     "a": "Drone filming needs a UAE permit. Ask for it in Get an estimate and we quote it."
+    }
+   ]
+  },
+  {
+   "id": "photo",
+   "name": "Photography",
+   "noun": "photographer",
+   "h1": "Sports photography, ready to share.",
+   "sub": "Action, teams and awards, edited and delivered in an online gallery.",
+   "hero": "/img/flag.jpg",
+   "heroAlt": "Flag football action photo by FFP Sports",
+   "card": "Action, teams and awards, edited and ready to share.",
+   "baseLine": "Every photography booking. Book 2 hours for one match, or a full day for an event.",
+   "pkgs": [
+    {
+     "name": "Photography",
+     "line": "",
+     "img": "/img/flag.jpg",
+     "items": [
+      {
+       "t": "Pro sports photographer",
+       "d": "On site the whole booking."
+      },
+      {
+       "t": "Sports lenses",
+       "d": "Fast action, frozen sharp."
+      },
+      {
+       "t": "Every photo edited",
+       "d": "Colour and light, done by hand."
+      },
+      {
+       "t": "Online gallery",
+       "d": "Link within 48 hours. Share it with the squad."
+      },
+      {
+       "t": "Full resolution",
+       "d": "Download for print and social."
+      },
+      {
+       "t": "Yours to use",
+       "d": "Post and print anywhere."
+      }
+     ]
+    }
+   ],
+   "addons": [
+    {
+     "icon": "sun",
+     "t": "Same-day photos",
+     "d": "30 edited photos sent the same evening, for match-night posts."
+    },
+    {
+     "icon": "people",
+     "t": "Team and player portraits",
+     "d": "A portrait set-up with lighting for every player and the full team."
+    },
+    {
+     "icon": "person",
+     "t": "Second photographer",
+     "d": "A second specialist on every moment."
+    },
+    {
+     "icon": "clock",
+     "t": "Extra hour",
+     "d": "More time when the event runs long."
+    }
+   ],
+   "faqs": [
+    {
+     "q": "How many photos do I get?",
+     "a": "Every good shot, edited. Usually 150 or more for 2 hours, and 400 or more for a full day."
+    },
+    {
+     "q": "How fast are the photos ready?",
+     "a": "Online gallery within 48 hours. Add Same-day photos to get 30 edited photos the same evening."
+    },
+    {
+     "q": "How are photos delivered?",
+     "a": "A private online gallery. Anyone with the link can view and download."
+    },
+    {
+     "q": "Can players download their own photos?",
+     "a": "Yes. Share the gallery link with the squad."
+    },
+    {
+     "q": "What size are the photos?",
+     "a": "Full resolution, ready for print, posters and social media."
+    },
+    {
+     "q": "Do you do team and individual portraits?",
+     "a": "Yes. Add Team and player portraits and we bring lights and set up a portrait spot."
+    },
+    {
+     "q": "Can I get the RAW files?",
+     "a": "No. You get every photo edited by hand, which is the finished result."
+    },
+    {
+     "q": "Who owns the photos?",
+     "a": "You do. Post and print anywhere."
+    },
+    {
+     "q": "What should I send before the day?",
+     "a": "The schedule and any must-have shots, such as the trophy presentation or sponsors."
+    },
+    {
+     "q": "Can you cover two pitches or courts at once?",
+     "a": "Add a Second photographer so both are covered."
+    }
+   ]
+  },
+  {
+   "id": "pod",
+   "name": "Podcasting",
+   "noun": "podcast",
+   "h1": "Your podcast, recorded at your venue.",
+   "sub": "We bring the full podcast set to you. Get your message heard.",
+   "hero": "/img/pod.jpg",
+   "heroAlt": "FFP Sports podcast set with microphones and cameras",
+   "card": "We bring the full podcast set to your venue.",
+   "baseLine": "Every podcast booking. Book 2 hours for one episode, or a full day for a series.",
+   "pkgs": [
+    {
+     "name": "Podcast",
+     "line": "",
+     "img": "/img/pod.jpg",
+     "items": [
+      {
+       "t": "3 cameras",
+       "d": "Three angles in 4K, ready for YouTube."
+      },
+      {
+       "t": "Shure MV7+ microphones",
+       "d": "Up to 4 hosts and guests."
+      },
+      {
+       "t": "Studio mixing",
+       "d": "Clean, balanced sound for every voice."
+      },
+      {
+       "t": "Pro lighting",
+       "d": "Everyone looks their best on camera."
+      },
+      {
+       "t": "Producer",
+       "d": "Sets up, runs the recording, packs down."
+      },
+      {
+       "t": "All files",
+       "d": "Audio and video, download link within 48 hours."
+      }
+     ]
+    }
+   ],
+   "addons": [
+    {
+     "icon": "scissors",
+     "t": "Edited episode",
+     "d": "Cut, mixed and ready to publish, within 5 days."
+    },
+    {
+     "icon": "vertical",
+     "t": "Social clips",
+     "d": "5 vertical clips of the best moments."
+    },
+    {
+     "icon": "live",
+     "t": "Livestream the podcast",
+     "d": "Go live on YouTube or Facebook while you record."
+    },
+    {
+     "icon": "clock",
+     "t": "Extra hour",
+     "d": "More recording time."
+    }
+   ],
+   "faqs": [
+    {
+     "q": "Where do you record?",
+     "a": "At your venue: clubhouse, office or event. We bring the full set."
+    },
+    {
+     "q": "What room do we need?",
+     "a": "A quiet room with space for a table and chairs. Our kit runs on battery, so power is a bonus, not a must."
+    },
+    {
+     "q": "How many people can be on?",
+     "a": "Up to 4 hosts and guests, each with their own microphone, filmed from three angles."
+    },
+    {
+     "q": "How long does set-up take?",
+     "a": "About 45 minutes. We arrive early so you start on time."
+    },
+    {
+     "q": "How many episodes can we record?",
+     "a": "2 hours suits one or two episodes. A full day suits a series of four or more."
+    },
+    {
+     "q": "Do we get video as well as audio?",
+     "a": "Yes. You get the audio and all three camera angles."
+    },
+    {
+     "q": "Can you edit and publish it for us?",
+     "a": "Add Edited episode and we deliver files ready for Spotify, Apple Podcasts and YouTube."
+    },
+    {
+     "q": "Can we stream it live?",
+     "a": "Yes. Add Livestream the podcast and it goes live on YouTube or Facebook while you record."
+    },
+    {
+     "q": "Can you make clips for social media?",
+     "a": "Add Social clips for 5 vertical clips of the best moments."
+    },
+    {
+     "q": "Who owns the recording?",
+     "a": "You do. Publish it anywhere."
+    }
+   ]
+  }
+ ],
+ "videos": [
+  {
+   "id": "sWw24pO_3s8",
+   "img": "/img/b-6ed0d375cfa83bfb116d5a6c1edd87af.jpg",
+   "title": "Asia Rugby Division 3 West, Qatar v Iran",
+   "client": "Asia Rugby"
+  },
+  {
+   "id": "I5k_lToNpiI",
+   "img": "/img/b-a93acf4cbee220252bf98560a066e7a9.jpg",
+   "title": "UAE Athletics Grand Prix 2025",
+   "client": "UAE Athletics Federation"
+  },
+  {
+   "id": "nABmEvXEAIk",
+   "img": "/img/b-277b2f374189681676c11825f2b9cf97.jpg",
+   "title": "Abu Dhabi Women’s T20 Final",
+   "client": "Abu Dhabi Cricket & Sports Hub"
+  },
+  {
+   "id": "Y4NOP5z7JjA",
+   "img": "/img/b-03ae88687f8542a99128d2ea4cb4ec89.jpg",
+   "title": "Aspire 11th Invitational, Artistic Gymnastics",
+   "client": "Aspire Gymnastics"
+  },
+  {
+   "id": "C4V1R_3WmJQ",
+   "img": "/img/b-b7d3b260c4b902f5fdc53e2db54ccdf8.jpg",
+   "title": "SBD UAE Power Meet 15",
+   "client": "Desert Barbell"
+  },
+  {
+   "id": "_qWOqfmrOuw",
+   "img": "/img/b-13b1b8ecfdf8fcfaedb50371160deaa5.jpg",
+   "title": "Spinneys Dubai 92 Cycle Challenge 2026",
+   "client": "Spinneys 92"
+  },
+  {
+   "id": "cJUKOKJV1w4",
+   "img": "/img/b-7fb17deaea43f6b9f613add4124844b0.jpg",
+   "title": "Sharjah International Surf Lifesaving Championship",
+   "client": "Sharjah 2025"
+  },
+  {
+   "id": "lgo7MnM5k1w",
+   "img": "/img/b-0dee4cd0b65925322a99dc07426ef09b.jpg",
+   "title": "Umm Al Quwain Half Marathon 2026",
+   "client": "Umm Al Quwain"
+  },
+  {
+   "id": "9aRMrfgEjxc",
+   "img": "/img/b-83e5decdd6011186793d583370caf9d7.jpg",
+   "title": "Emirates Invitational 7s",
+   "client": "Rugby 7s"
+  },
+  {
+   "id": "rBPd9Q7kOCQ",
+   "img": "/img/b-c0166948473fd096d294db13c76767bf.jpg",
+   "title": "Dubai Fitness Championship, Day 2",
+   "client": "Dubai Fitness Championship"
+  }
+ ],
+ "logos": [
+  {
+   "img": "/img/b-075de10d2ec3fac20d3d1deb264a87ed.jpg",
+   "name": "Dubai Sports Council"
+  },
+  {
+   "img": "/img/b-369011e00a88bce3f9f4367bf39f3a75.jpg",
+   "name": "Etisalat"
+  },
+  {
+   "img": "/img/b-c30624fef2481230cce62fc80ee3a7db.jpg",
+   "name": "BMW"
+  },
+  {
+   "img": "/img/b-54562d045a582c1ea973e69c87402b47.jpg",
+   "name": "Jumeirah"
+  },
+  {
+   "img": "/img/b-e37ea42a5238a8ddd7b6e33d9f832944.jpg",
+   "name": "Asia Rugby"
+  },
+  {
+   "img": "/img/b-b5f98e64ec1f24d367a7dc6f1eea9066.jpg",
+   "name": "Dubai CrossFit Championship"
+  },
+  {
+   "img": "/img/b-36fe33c96ceec90b08d9dffe0e783292.jpg",
+   "name": "Aspire Gymnastics Dubai"
+  },
+  {
+   "img": "/img/b-da02b1ae02175906db2bb47916a006ef.jpg",
+   "name": "Padel Point"
+  },
+  {
+   "img": "/img/b-75a5fd2f4d93832fc8a6dbae9beabaf6.jpg",
+   "name": "The Flying Daf Squash Academy"
+  }
+ ],
+ "kits": [
+  {
+   "id": "kit1",
+   "name": "Single-camera stream kit",
+   "detail": "Sony Z200 with 20x zoom, YoloBox Ultra with 4G built in, DJI Mic 3 with 2 transmitters, tripod and carry bag.",
+   "img": "/img/stadiumcam.jpg"
+  },
+  {
+   "id": "kit3",
+   "name": "3-camera wireless kit",
+   "detail": "3 OBSBOT Tail 2 wireless 4K cameras, YoloBox Extreme, RODECaster Pro II and 2 broadcast headsets.",
+   "img": "/img/gymcam.jpg"
+  },
+  {
+   "id": "vmix",
+   "name": "vMix production system",
+   "detail": "Production PC running vMix, multi-camera capture, 2 monitors and a control surface. Built for larger events.",
+   "img": "/img/desk.jpg"
+  },
+  {
+   "id": "podk",
+   "name": "Podcast kit",
+   "detail": "4 Shure MV7+ microphones and stands, lights and mixing. Runs on battery, so any room works.",
+   "img": "/img/pod.jpg"
+  }
+ ],
+ "commonFaq": [
+  {
+   "q": "How do I book?",
+   "a": "Pick a service, choose 2 hours or a full day, add your date and details, then confirm. Your price shows before you pay."
+  },
+  {
+   "q": "Do you travel outside Dubai?",
+   "a": "Yes, anywhere in the UAE. Dubai is included. Other emirates add a travel charge per crew member per day, from AED 250 for Sharjah and Ajman. It shows before you pay."
+  },
+  {
+   "q": "Can I get an invoice?",
+   "a": "Yes. Your invoice is emailed as soon as you book."
+  },
+  {
+   "q": "What if I need to cancel?",
+   "a": "More than 7 days before: full refund. 2 to 7 days before: 50% back. Less than 48 hours: no refund."
+  },
+  {
+   "q": "How do I pay?",
+   "a": "In advance, by bank transfer for the full invoice amount. Over AED 10,000, pay 50% to book and the rest before the work starts."
+  },
+  {
+   "q": "Who do you work with?",
+   "a": "Clubs, schools, academies, federations and event organisers, in Dubai and across the UAE."
+  },
+  {
+   "q": "Can I change the date?",
+   "a": "Yes, free of charge up to 7 days before your event."
+  }
+ ],
+ "rentFaq": [
+  {
+   "q": "How does rental work?",
+   "a": "Pick your gear and dates, then book. Collect it free from us in Dubai, or we drop it off and pick it up. Each is a separate charge: AED 150 in Dubai, 225 in Sharjah and Ajman, 375 in Abu Dhabi and Al Ain, 450 in the northern emirates."
+  },
+  {
+   "q": "Is there a deposit?",
+   "a": "Yes, AED 2,000 per kit or AED 500 per camera or similar item, paid with the rental and refunded when the gear comes back undamaged. Tripods and headsets need no deposit."
+  },
+  {
+   "q": "What do I need to rent?",
+   "a": "Your Emirates ID or passport, uploaded when you book."
+  },
+  {
+   "q": "Can someone show us how it works?",
+   "a": "Add Set-up and handover. An FFP operator sets everything up at your venue and shows your team how to run it."
+  },
+  {
+   "q": "Can you run it for us instead?",
+   "a": "Yes. Book a livestream and our crew brings and runs the gear."
+  },
+  {
+   "q": "Do you give a discount for longer rentals?",
+   "a": "Yes. 10% off for 3 to 6 days, and 20% off for 7 days or more."
+  },
+  {
+   "q": "What if something breaks?",
+   "a": "Tell us straight away. Repairs come out of the deposit, up to the repair cost."
+  },
+  {
+   "q": "Can I extend my rental?",
+   "a": "Yes, if the gear is free. Message us before your return date."
+  },
+  {
+   "q": "Is the vMix system hard to run?",
+   "a": "It needs an experienced operator. Most clients add Set-up and handover, or book our crew to run it."
+  }
+ ],
+ "talentFaq": [
+  {
+   "q": "Who are the talent?",
+   "a": "Commentators, MCs, presenters, interviewers and announcers with an approved FFP Talent profile. Every profile is checked against a real reel."
+  },
+  {
+   "q": "Can I watch them first?",
+   "a": "Yes. Every profile has a reel of their work."
+  },
+  {
+   "q": "Can I book talent without your crew?",
+   "a": "Yes. Book them on their own for your event, or add them to a livestream."
+  },
+  {
+   "q": "What is included?",
+   "a": "The talent on site for the time you book, plus preparation: team lists, name pronunciation and your run sheet."
+  },
+  {
+   "q": "What should I send them?",
+   "a": "Team sheets, the schedule and any sponsor reads, at least 48 hours before."
+  },
+  {
+   "q": "Can they work in Arabic?",
+   "a": "Filter by language to see who presents in Arabic and other languages."
+  },
+  {
+   "q": "How do I join as talent?",
+   "a": "Create your FFP Talent profile and upload your reel. Once approved, you show here."
+  }
+ ],
+ "talent": [
+  {
+   "name": "Grant Goes",
+   "photo": "/img/grant.jpg",
+   "roles": [
+    "Commentator",
+    "MC and host",
+    "Presenter"
+   ],
+   "sports": [
+    "Rugby",
+    "Football",
+    "Running",
+    "Fitness"
+   ],
+   "langs": [
+    "English"
+   ],
+   "credits": "UAE Rugby, UAE FA, Dubai Run, Dubai Fitness Challenge",
+   "reel": "https://www.youtube.com/watch?v=sWw24pO_3s8"
+  }
+ ]
+}

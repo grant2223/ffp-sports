@@ -1,38 +1,30 @@
 import { lazy, Suspense, useEffect } from "react";
 import { usePath } from "./lib/router";
-import { StaticPage } from "./site/Static";
 import { Book } from "./book/Book";
 import { Estimate } from "./book/Estimate";
 import { Legal } from "./site/Legal";
-import home from "./site/pages/home.html?raw";
-import livestream from "./site/pages/livestream.html?raw";
-import video from "./site/pages/video.html?raw";
-import photography from "./site/pages/photography.html?raw";
-import podcasting from "./site/pages/podcasting.html?raw";
-import gear from "./site/pages/gear.html?raw";
-import talent from "./site/pages/talent.html?raw";
+import { Home } from "./web/Home";
+import { Service } from "./web/Service";
+import { Gear } from "./web/Gear";
+import { Talent } from "./web/Talent";
 
 const Admin = lazy(() => import("./admin/Admin"));
-
-const PAGES: Record<string, [string, string, string]> = {
-  "/": [home, "pg-home", "FFP Sports | Livestream, video, photography and podcasting in the UAE"],
-  "/livestream": [livestream, "", "Livestream | FFP Sports"],
-  "/video": [video, "", "Video | FFP Sports"],
-  "/photography": [photography, "", "Photography | FFP Sports"],
-  "/podcasting": [podcasting, "", "Podcasting | FFP Sports"],
-  "/gear-rental": [gear, "", "Gear rental | FFP Sports"],
-  "/talent": [talent, "", "Talent | FFP Sports"],
+const SVC: Record<string, [string, string]> = {
+  "/livestream": ["live", "Livestream"], "/video": ["video", "Video"], "/photography": ["photo", "Photography"], "/podcasting": ["pod", "Podcasting"],
 };
 
 function Title({ t }: { t: string }) { useEffect(() => { document.title = t; }, [t]); return null; }
 
 export default function App() {
   const path = usePath().split("?")[0].replace(/\/+$/, "") || "/";
+  useEffect(() => { window.scrollTo(0, 0); }, [path]);
   if (location.hostname.startsWith("admin.") || path.startsWith("/admin")) return <Suspense fallback={null}><Title t="FFP Sports admin" /><Admin /></Suspense>;
   if (path === "/book") return <><Title t="Book | FFP Sports" /><Book /></>;
   if (path === "/estimate") return <><Title t="Get an estimate | FFP Sports" /><Estimate /></>;
   if (path === "/terms") return <><Title t="Booking terms | FFP Sports" /><Legal kind="terms" /></>;
   if (path === "/privacy") return <><Title t="Privacy | FFP Sports" /><Legal kind="privacy" /></>;
-  const p = PAGES[path] || PAGES["/"];
-  return <><Title t={p[2]} /><StaticPage key={path} html={p[0]} cls={p[1]} /></>;
+  if (SVC[path]) return <><Title t={SVC[path][1] + " | FFP Sports"} /><Service key={path} id={SVC[path][0]} /></>;
+  if (path === "/gear-rental") return <><Title t="Gear rental | FFP Sports" /><Gear /></>;
+  if (path === "/talent") return <><Title t="Talent | FFP Sports" /><Talent /></>;
+  return <><Title t="FFP Sports | Livestream, video, photography and podcasting in the UAE" /><Home /></>;
 }
