@@ -1,0 +1,130 @@
+<div style="font-family: Montserrat, Arial, sans-serif; color: #0f1720; background: #ffffff; -webkit-font-smoothing: antialiased; overflow: hidden; min-height: 100vh">
+
+  <header class="hdr">
+    <div class="wrap">
+      <a href="/" aria-label="FFP Sports home"><img fetchpriority="high" class="hdrlogo" src="/img/logo.png" alt="FFP Sports" style="height: 36px; width: auto; display: block"></a>
+      <nav aria-label="Main">
+        <a class="navlink" href="/livestream">Livestream</a><a class="navlink" href="/video">Video</a><a class="navlink on" href="/photography">Photography</a><a class="navlink" href="/podcasting">Podcasting</a><a class="navlink" href="/gear-rental">Gear rental</a><a class="navlink" href="/talent">Talent</a>
+        <a class="btn gold headbtn hbsvc" href="/book?s=photo" style="padding: 12px 24px; font-size: 15px">Book now</a>
+        <button class="menubtn" type="button" aria-label="Open menu" data-act="menu-open"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0f1720" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+      </nav>
+    </div>
+  </header>
+  <div data-menu hidden>
+    <div class="menu" role="dialog" aria-label="Menu">
+      <div class="mtop"><img loading="lazy" decoding="async" src="/img/logo.png" alt="FFP Sports" style="height: 30px; width: auto"><button class="menubtn" type="button" aria-label="Close menu" data-act="menu-close" style="display: flex"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0f1720" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+      <nav aria-label="Menu" style="margin-top: 20px; flex: 1; overflow-y: auto">
+        <div class="mlab">Services</div>
+        <div class="mgrid"><a class="msvc" href="/livestream"><img loading="lazy" decoding="async" src="/img/desk.jpg" alt=""><span>Livestream<small>Live on YouTube, Facebook and your website, with scores on screen.</small></span></a><a class="msvc" href="/video"><img loading="lazy" decoding="async" src="/img/poolcam.jpg" alt=""><span>Video<small>Your match or event on film, in 4K.</small></span></a><a class="msvc" href="/photography"><img loading="lazy" decoding="async" src="/img/flag.jpg" alt=""><span>Photography<small>Action, teams and awards, edited and ready to share.</small></span></a><a class="msvc" href="/podcasting"><img loading="lazy" decoding="async" src="/img/pod.jpg" alt=""><span>Podcasting<small>We bring the full podcast set to your venue.</small></span></a></div>
+        <div class="mlab" style="margin-top: 30px">More</div>
+        <div class="mmore"><a href="/gear-rental">Gear rental</a><a href="/talent">Talent</a><a href="/estimate">Get an estimate</a></div>
+      </nav>
+      <a class="btn gold" href="/book?s=photo" style="margin-top: auto; width: 100%">Book now</a>
+    </div>
+  </div>
+
+  <section aria-label="Photography" style="background: radial-gradient(60% 60% at 100% 0%, rgba(10,10,10,0.09), rgba(10,10,10,0) 65%), radial-gradient(50% 50% at 0% 100%, rgba(255,214,0,0.16), rgba(255,214,0,0) 60%), #ffffff">
+    <div class="wrap" style="padding-top: clamp(32px, 5vw, 72px); padding-bottom: clamp(48px, 6vw, 88px); display: flex; flex-wrap: wrap; align-items: center; gap: clamp(28px, 5vw, 64px)">
+      <div style="flex: 1 1 440px; min-width: 0">
+        <div class="r1" style="display: inline-flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700; color: #0A0A0A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v11H3z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>Photography</div>
+        <h1 class="h1 r2" style="margin-top: 16px">Sports photography, ready to share.</h1>
+        <p class="sub r2" style="max-width: 520px">Action, teams and awards, edited and delivered in an online gallery.</p>
+        <div class="heroacts r3" style="margin-top: 30px; display: flex; flex-wrap: wrap; gap: 12px">
+          <a class="btn gold" href="/book?s=photo">Book a photographer</a>
+        </div>
+        <div class="trust r3"><div><b>116+</b><span>events covered</span></div><div><b>77+</b><span>clients</span></div></div>
+      </div>
+      <div class="heroimg r2" style="flex: 1.15 1 500px; min-width: 0; height: 500px; position: relative">
+        <img loading="lazy" decoding="async" class="shot" src="/img/flag.jpg" alt="Flag football action photo by FFP Sports" style="border-radius: 8px">
+        {f'<span class="badge" style="left: 20px; top: 20px"><i></i></span>' if s['badge'] else ''}
+      </div>
+    </div>
+  </section>
+
+
+  <section id="included" class="tint" aria-labelledby="inc-h">
+    <div class="wrap sec">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px">
+        <div><h2 id="inc-h" class="h2">What you get</h2><p class="sub">Every photography booking. Book 2 hours for one match, or a full day for an event.</p></div>
+        <a class="btn gold incbook" href="/book?s=photo">Book a photographer</a>
+      </div>
+      <div class="incwrap" style="margin-top: 40px"><div class="incimg"><img loading="lazy" decoding="async" class="shot" src="/img/photog.jpg" alt="Our photographer at a team session"></div><div class="rows" style="grid-template-columns: 1fr">
+        <div class="rowi"><h3>Pro sports photographer</h3><p>On site the whole booking.</p></div>
+        <div class="rowi"><h3>Sports lenses</h3><p>Fast action, frozen sharp.</p></div>
+        <div class="rowi"><h3>Every photo edited</h3><p>Colour and light, done by hand.</p></div>
+        <div class="rowi"><h3>Online gallery</h3><p>Link within 48 hours. Share it with the squad.</p></div>
+        <div class="rowi"><h3>Full resolution</h3><p>Download for print and social.</p></div>
+        <div class="rowi"><h3>Yours to use</h3><p>Post and print anywhere.</p></div>
+      </div></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="ad-h">
+    <div class="wrap sec">
+      <h2 id="ad-h" class="h2">Add-ons</h2>
+      <p class="sub">Tick any of these when you book.</p>
+      <div class="rows" style="margin-top: 32px">
+        <div class="rowi"><h3>Same-day photos</h3><p>30 edited photos sent the same evening, for match-night posts.</p></div>
+        <div class="rowi"><h3>Team and player portraits</h3><p>A portrait set-up with lighting for every player and the full team.</p></div>
+        <div class="rowi"><h3>Second photographer</h3><p>A second specialist on every moment.</p></div>
+        <div class="rowi"><h3>Extra hour</h3><p>More time when the event runs long.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tint" aria-labelledby="gal-h">
+    <div class="wrap sec">
+      <h2 id="gal-h" class="h2">Recent shoots</h2>
+      <div class="gallery" style="margin-top: 32px; grid-template-columns: repeat(2, minmax(0, 1fr))">
+        <img loading="lazy" decoding="async" class="shot" src="/img/race.jpg" alt="Runners after a race">
+        <img loading="lazy" decoding="async" class="shot" src="/img/fans.jpg" alt="Fans celebrating at a stadium">
+      </div>
+    </div>
+  </section>
+
+
+  <section class="tint" aria-labelledby="faq-h">
+    <div class="wrap sec">
+      <h2 id="faq-h" class="h2">Questions</h2>
+      <div class="faqcols">
+        <div class="faq"><h3 class="faqh">Photography</h3><details><summary>How many photos do I get?</summary><p>Every good shot, edited. Usually 150 or more for 2 hours, and 400 or more for a full day.</p></details>
+        <details><summary>How fast are the photos ready?</summary><p>Online gallery within 48 hours. Add Same-day photos to get 30 edited photos the same evening.</p></details>
+        <details><summary>How are photos delivered?</summary><p>A private online gallery. Anyone with the link can view and download.</p></details>
+        <details><summary>Can players download their own photos?</summary><p>Yes. Share the gallery link with the squad.</p></details>
+        <details><summary>What size are the photos?</summary><p>Full resolution, ready for print, posters and social media.</p></details>
+        <details><summary>Do you do team and individual portraits?</summary><p>Yes. Add Team and player portraits and we bring lights and set up a portrait spot.</p></details>
+        <details><summary>Can I get the RAW files?</summary><p>No. You get every photo edited by hand, which is the finished result.</p></details>
+        <details><summary>Who owns the photos?</summary><p>You do. Post and print anywhere.</p></details>
+        <details><summary>What should I send before the day?</summary><p>The schedule and any must-have shots, such as the trophy presentation or sponsors.</p></details>
+        <details><summary>Can you cover two pitches or courts at once?</summary><p>Add a Second photographer so both are covered.</p></details></div>
+        <div class="faq"><h3 class="faqh">Booking and payment</h3><details><summary>How do I book?</summary><p>Pick a service, choose 2 hours or a full day, add your date and details, then confirm. Your price shows before you pay.</p></details>
+        <details><summary>Do you travel outside Dubai?</summary><p>Yes, anywhere in the UAE. Dubai is included. Other emirates add a travel charge per crew member per day, from AED 250 for Sharjah and Ajman. It shows before you pay.</p></details>
+        <details><summary>Can I get an invoice?</summary><p>Yes. Your invoice is emailed as soon as you book.</p></details>
+        <details><summary>What if I need to cancel?</summary><p>More than 7 days before: full refund. 2 to 7 days before: 50% back. Less than 48 hours: no refund.</p></details>
+        <details><summary>How do I pay?</summary><p>In advance, by bank transfer for the full invoice amount. Over AED 10,000, pay 50% to book and the rest before the work starts.</p></details>
+        <details><summary>Who do you work with?</summary><p>Clubs, schools, academies, federations and event organisers, in Dubai and across the UAE.</p></details>
+        <details><summary>Can I change the date?</summary><p>Yes, free of charge up to 7 days before your event.</p></details></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" aria-labelledby="cta-h">
+    <div class="wrap sec">
+      <h2 id="cta-h">Book your photographer in two minutes.</h2>
+      <p>Need more days or a bigger crew? Get an estimate.</p>
+      <div style="margin-top: 30px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px">
+        <a class="btn gold" href="/book?s=photo">Book a photographer</a>
+        <a class="btn ghost" href="/estimate">Get an estimate</a>
+      </div>
+    </div>
+  </section>
+  <div class="sbar"><a class="btn gold" href="/book?s=photo" style="width: 100%">Book a photographer</a></div>
+
+  <footer class="ftr">
+    <div class="wrap">
+      <img loading="lazy" decoding="async" src="/img/logo.png" alt="FFP Sports" style="height: 36px; width: auto">
+      <nav aria-label="Footer"><a href="/livestream">Livestream</a><a href="/video">Video</a><a href="/photography">Photography</a><a href="/podcasting">Podcasting</a><a href="/gear-rental">Gear rental</a><a href="/talent">Talent</a><a href="/estimate">Get an estimate</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a></nav>
+      <span>+971 56 261 7359, info@findfitpeople.com</span>
+    </div>
+  </footer>
+</div>

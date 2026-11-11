@@ -1,0 +1,60 @@
+import json, re, time, urllib.parse
+F = json.load(open('/home/claude/ffp-sports/test/fixtures.json'))
+NOW = '2026-11-11T09:00:00+00:00'
+F['bookings'] = [
+ dict(id='b1', ref='FFPS-R-10001', kind='booking', status='requested', service_id='live', mode='crew', choices={'dur': 'day'}, event_date='2026-12-12', start_time='15:00', sport='Rugby', venue='The Sevens Stadium, Dubai', zone_id='dubai',
+      first_name='Sara', last_name='Malik', org='Dubai Hurricanes', email='sara@club.com', phone='+971500000000', total=13500, subtotal=13500, discount=0, cost=7580, deposit=0, pay_plan='split', paid=0, notes='Final day, 3 matches.', admin_notes='', created_at=NOW, kind_='', code=None, id_doc_path=None),
+ dict(id='b2', ref='FFPS-R-10002', kind='booking', status='confirmed', service_id=None, mode='gear', choices={}, gear_from='2026-11-13', gear_to='2026-11-14', handover='delivery', address='Dubai Media City', zone_id='dubai',
+      first_name='Kirby', last_name='Lane', org='Augustus Media', email='kirby@example.com', phone='+971501111111', total=3350, subtotal=3350, discount=0, cost=840, deposit=1500, pay_plan='full', paid=0, notes='', admin_notes='', created_at=NOW, code=None, id_doc_path='b2/id.jpg'),
+ dict(id='b3', ref='FFPS-R-10003', kind='estimate', status='requested', service_id=None, mode='crew', choices={}, event_date='2027-01-20', sport='Padel', venue='Dubai Sports City', zone_id='dubai',
+      first_name='Omar', last_name='Haddad', org='Padel League UAE', email='omar@example.com', phone='', total=42000, subtotal=42000, discount=0, cost=0, deposit=0, pay_plan='full', paid=0, notes='Event: Dubai Padel Open\nLevel: National', admin_notes='', created_at=NOW, code=None, id_doc_path=None)]
+F['booking_lines'] = [dict(id=1, booking_id='b1', label='3 cameras, full day', amount=10000, sort=0), dict(id=2, booking_id='b1', label='Commentator, club level', amount=2000, sort=1), dict(id=3, booking_id='b1', label='Highlights reel', amount=600, sort=2), dict(id=4, booking_id='b1', label='Extra hour', amount=900, sort=3),
+ dict(id=5, booking_id='b2', label='3 × Sony Z200 camera, 1 day', amount=2250, sort=0), dict(id=6, booking_id='b2', label='8 × Video tripod with fluid head, 1 day', amount=800, sort=1), dict(id=7, booking_id='b2', label='Drop-off, Dubai', amount=150, sort=2), dict(id=8, booking_id='b2', label='Pick-up, Dubai', amount=150, sort=3),
+ dict(id=9, booking_id='b3', label='Livestream, 4 courts, 2 cameras each, 8 hours, 2 days', amount=80000, sort=0)]
+F['assignments'] = [dict(id=1, booking_id='b1', role_id='camera-operator', staff_id='s2', day_rate=2000, status='confirmed'), dict(id=2, booking_id='b1', role_id='technical-director-vision-mixer', staff_id=None, day_rate=2000, status='open'), dict(id=3, booking_id='b1', role_id='commentator', staff_id='s1', day_rate=1000, status='asked')]
+F['gear_holds'] = [dict(id=1, booking_id='b2', gear_id='z200', qty=3, date_from='2026-11-13', date_to='2026-11-14', bookings=dict(ref='FFPS-R-10002', status='confirmed', first_name='Kirby', last_name='Lane', org='Augustus Media', handover='delivery')),
+                   dict(id=2, booking_id='b2', gear_id='tripod', qty=8, date_from='2026-11-13', date_to='2026-11-14', bookings=dict(ref='FFPS-R-10002', status='confirmed', first_name='Kirby', last_name='Lane', org='Augustus Media', handover='delivery'))]
+F['payments'] = []
+F['staff'] = [dict(id='s1', email='grant@findfitpeople.com', first_name='Grant', middle_names='', last_name='Goes', phone='+971562617359', is_admin=True, is_crew=True, active=True, notes=''),
+              dict(id='s2', email='ali@example.com', first_name='Ali', middle_names='', last_name='Hassan', phone='+971502222222', is_admin=False, is_crew=True, active=True, notes='')]
+F['staff_roles'] = [dict(staff_id='s1', role_id='commentator', day_rate=None), dict(staff_id='s2', role_id='camera-operator', day_rate=2000), dict(staff_id='s2', role_id='technical-director-vision-mixer', day_rate=None)]
+F['quotes'] = [dict(id='q1', number='FFPS-Q-0144', status='draft', org='Augustus Media', attention='Kirby', email='kirby@example.com', subject='Gear rental, Sony Z200 and tripods', issue_date='2026-11-11', valid_until='2026-11-12',
+                    lines=[dict(desc='Sony Z200 camera rental', note='Broadcast camcorder, 20x zoom', qty=8, days=1, unit=750, cost=0), dict(desc='Video tripod with fluid head rental', qty=8, days=1, unit=100, cost=0), dict(desc='Drop-off, Dubai', note='Fri 13 Nov 2026, 9:00 am', qty=1, unit=150, cost=75), dict(desc='Pick-up, Dubai', qty=1, unit=150, cost=75)],
+                    terms=['Dates: drop-off Fri 13 Nov 2026 at 9:00 am.', 'Location: Dubai.'], total=7100, cost=150, created_at=NOW)]
+F['partner_codes'] = []
+F['email_log'] = [dict(id=1, to_email='sara@club.com', subject='We have your request FFPS-R-10001', kind='booking_received', ok=False, error='Email not set up yet (RESEND_API_KEY missing)', created_at=NOW)]
+sent = []
+
+def handle(route, req):
+    u = urllib.parse.urlparse(req.url); path = u.path; q = urllib.parse.parse_qs(u.query)
+    J = lambda body, status=200, headers=None: route.fulfill(status=status, content_type='application/json', body=json.dumps(body), headers={'access-control-allow-origin': '*', 'content-range': '0-0/%d' % (len(body) if isinstance(body, list) else 1), **(headers or {})})
+    if req.method == 'OPTIONS': return route.fulfill(status=200, headers={'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*'})
+    if path.startswith('/functions/v1/api'):
+        b = json.loads(req.post_data or '{}'); sent.append(b)
+        if b.get('action') == 'create_booking': return J({'ref': 'FFPS-R-10044', 'total': 1})
+        if b.get('action') == 'request_estimate': return J({'ref': 'FFPS-R-10045'})
+        if b.get('action') == 'check_code': return J({'pct': 5 if b.get('code', '').upper() == 'HURRICANES' else 0})
+        return J({'status': 'ok', 'ok': True})
+    if path.startswith('/rest/v1/rpc/'):
+        fn = path.split('/')[-1]
+        if fn == 'gear_free': return J([{'gear_id': g['id'], 'free': g['units'] - (1 if g['id'] == 'z200' else 0)} for g in F['gear']])
+        if fn in ('is_admin',): return J(True)
+        if fn == 'claim_staff': return J(F['staff'][0])
+        return J(None)
+    if path.startswith('/rest/v1/'):
+        t = path.split('/')[-1]; rows = list(F.get(t, []))
+        for k, v in q.items():
+            if k in ('select', 'order', 'limit', 'offset'): continue
+            v = v[0]
+            if v.startswith('eq.'): rows = [r for r in rows if str(r.get(k.split('.')[-1])).lower() == v[3:].lower()]
+            elif v.startswith('in.('): vals = v[4:-1].split(','); rows = [r for r in rows if str(r.get(k)) in [x.strip('"') for x in vals]]
+        if req.method != 'GET': return J(rows[:1] if 'single' not in (req.headers.get('accept') or '') else (rows[0] if rows else {}), 201)
+        if 'vnd.pgrst.object' in (req.headers.get('accept') or ''): return J(rows[0] if rows else {})
+        if req.method == 'HEAD' or (req.headers.get('prefer') or '').find('count') >= 0: return route.fulfill(status=200, headers={'content-range': '0-%d/%d' % (len(rows), len([r for r in rows])), 'access-control-allow-origin': '*', 'access-control-expose-headers': 'content-range'}, body='[]')
+        return J(rows)
+    if path.startswith('/auth/v1/user'): return J({'id': 'u1', 'email': 'grant@findfitpeople.com', 'aud': 'authenticated', 'role': 'authenticated'})
+    if path.startswith('/auth/v1/'): return J({})
+    return route.continue_()
+
+SESSION = json.dumps({'access_token': 'x.y.z', 'token_type': 'bearer', 'expires_in': 3600, 'expires_at': int(time.time()) + 36000, 'refresh_token': 'r',
+                      'user': {'id': 'u1', 'email': 'grant@findfitpeople.com', 'aud': 'authenticated', 'role': 'authenticated', 'app_metadata': {}, 'user_metadata': {}, 'created_at': NOW}})
