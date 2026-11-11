@@ -14,17 +14,20 @@ const fail = (msg: string, status = 400) => new Response(JSON.stringify({ error:
 const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 
 async function catalogue(): Promise<Catalogue> {
-  const [s, p, e, g, z, st] = await Promise.all([
+  const [s, p, e, g, z, st, ro, rg, sr] = await Promise.all([
     db.from("services").select("*").eq("active", true),
     db.from("packages").select("*").eq("active", true),
     db.from("extras").select("*").eq("active", true),
     db.from("gear").select("*").eq("active", true),
     db.from("zones").select("*"),
     db.from("settings").select("key,value"),
+    db.from("roles").select("id,group_id,name,client_day,cost_day,sort,active").eq("active", true),
+    db.from("role_groups").select("*"),
+    db.from("service_roles").select("*"),
   ]);
   const settings: Record<string, string> = {};
   for (const r of st.data ?? []) settings[r.key] = r.value;
-  return { services: s.data ?? [], packages: p.data ?? [], extras: e.data ?? [], gear: g.data ?? [], zones: z.data ?? [], settings } as Catalogue;
+  return { services: s.data ?? [], packages: p.data ?? [], extras: e.data ?? [], gear: g.data ?? [], zones: z.data ?? [], settings, roles: ro.data ?? [], roleGroups: rg.data ?? [], serviceRoles: sr.data ?? [] } as Catalogue;
 }
 
 async function send(to: string[], subject: string, html: string, kind: string, ids: { booking_id?: string; quote_id?: string }, from: string) {
@@ -128,6 +131,8 @@ Deno.serve(async (req) => {
           const e = cat.extras.find((x) => x.id === id); if (!e || !e.adds_crew) continue;
           roles.push(/Commentator/.test(e.name) ? "commentator" : /Graphics/.test(e.name) ? "graphics-operator" : /photographer/i.test(e.name) ? "photographer" : /videographer/i.test(e.name) ? "videographer" : "camera-operator");
         }
+        const allowed = new Set(cat.serviceRoles.filter((x) => x.service_id === c.svc).map((x) => x.role_id));
+        for (const [rid, q] of Object.entries(c.crewq ?? {})) if (allowed.has(rid)) for (let i = 0; i < Math.min(20, Math.floor(Number(q) || 0)); i++) roles.push(rid);
         const { data: rr } = await db.from("roles").select("id,cost_day").in("id", roles);
         await db.from("assignments").insert(roles.map((r) => ({ booking_id: b.id, role_id: r, day_rate: rr?.find((x) => x.id === r)?.cost_day ?? 0 })));
       }

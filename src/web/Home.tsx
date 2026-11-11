@@ -28,10 +28,8 @@ export function Home() {
     <Page>
       <section className="fs-hero"><div className="fs-wrap fs-hero-in">
         <div>
-          <span className="fs-kick">{I.pin({ s: 18 })} Sports media across the UAE</span>
-          <h1>Your sport, seen and remembered.</h1>
-          <span className="fs-tag">Livestream. Video. Photos. Podcasts.</span>
-          <p className="lead">For clubs, leagues and events. Pick what you need, see your price straight away, book in two minutes.</p>
+          <h1 style={{ marginTop: 0 }}>Livestream, video and photos for your sport.</h1>
+          <p className="lead">Plus podcasts and gear rental, for clubs, leagues and events across the UAE. See your price and book in two minutes.</p>
           <div className="fs-ctas">
             <a className="fs-btn y" href="/book" onClick={link("/book")}>Book now {I.arrow({ s: 20 })}</a>
             <a className="fs-btn w" href="/estimate" onClick={link("/estimate")}>Get an estimate</a>

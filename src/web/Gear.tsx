@@ -2,33 +2,64 @@ import { useEffect, useState } from "react";
 import { I } from "./Icons";
 import { CtaBand, Faq, Page, Trust, link } from "./Layout";
 import { sb } from "../lib/supabase";
+import { CATS, KITS } from "./gearInfo";
 import C from "./content.json";
 
-const ITEM_ICON: Record<string, (p?: { s?: number }) => React.ReactNode> = { z200: I.cam, tail2: I.cam, yolou: I.live, yoloe: I.live, djimic: I.mic, rode: I.mic, hset: I.mic, tripod: I.cam };
+type Row = { id: string; kind: string; name: string; strap: string; img: string; price_day: number; units: number; deposit: number };
+const aed = (n: number) => "AED " + Number(n).toLocaleString("en");
+const ICON = { cam: I.cam, live: I.live, mic: I.mic, tripod: I.cam };
 
 export function Gear() {
-  const [items, setItems] = useState<{ id: string; name: string; strap: string }[]>([]);
-  useEffect(() => { sb.from("gear").select("id,name,strap").eq("kind", "item").eq("active", true).order("sort").then(({ data }) => setItems(data ?? [])); }, []);
+  const [gear, setGear] = useState<Row[]>([]);
+  useEffect(() => { sb.from("gear").select("id,kind,name,strap,img,price_day,units,deposit").eq("active", true).order("sort").then(({ data }) => setGear((data as Row[]) ?? [])); }, []);
   const book = "/book?s=gear";
+  const kits = gear.filter((g) => g.kind === "kit" && KITS[g.id]);
+  const byId = Object.fromEntries(gear.map((g) => [g.id, g]));
   return (
     <Page book={book}>
-      <section className="fs-phero"><img src="/img/stadiumcam.jpg" alt="Broadcast camera at a stadium" />
-        <div className="fs-wrap"><span className="fs-kick">Gear rental</span>
-          <h1>The kit we stream with, yours by the day.</h1>
-          <p className="lead">Streaming kits, broadcast cameras and our vMix system. Collect free in Dubai, or we drop it off and pick it up.</p>
-          <div className="fs-ctas"><a className="fs-btn y" href={book} onClick={link(book)}>Book gear {I.arrow({ s: 20 })}</a>
-            <a className="fs-btn w" href="/estimate" onClick={link("/estimate")}>Get an estimate</a></div></div>
-      </section>
-      <Trust items={[["Ready to go", "Batteries charged, cables and cases included."], ["Collect or delivered", "Free from us in Dubai, or dropped to your venue."], ["Longer hire, less a day", "10% off 3 days or more, 20% off a week."], ["Set-up on request", "An operator sets it up and shows your team."]]} />
-      <section className="fs-sec"><div className="fs-wrap">
-        <div className="fs-head"><div><h2 className="fs-h2">Kits</h2><p className="fs-sub">Everything to stream a match, in one case.</p></div></div>
-        <div className="fs-kits">{C.kits.map((k) => <a key={k.id} className="fs-kit" href={book} onClick={link(book)}><img src={k.img} alt={k.name} loading="lazy" />
-          <div><b>{k.name}</b><span>{k.detail}</span><span className="go" style={{ display: "inline-flex", gap: 6, alignItems: "center", fontWeight: 700, color: "var(--ink)", marginTop: 6 }}>Book this kit {I.arrow({ s: 16 })}</span></div></a>)}</div>
+      <section className="fs-phero"><div className="fs-wrap">
+        <h1>Livestream gear rental.</h1>
+        <p className="lead">Cameras and streaming kits by the day. Collect in Dubai, or we deliver.</p>
       </div></section>
+      <Trust items={[["Tested before it leaves", "Charged, cleaned and checked, with every cable."], ["Longer hire costs less", "10% off 3 days or more, 20% off 7 days or more."],
+        ["Deposit back on return", "Refunded the day the gear comes back in good order."], ["Set-up on request", "An operator sets it up and shows your team."]]} />
+
+      <section className="fs-sec fs-first"><div className="fs-wrap">
+        <h2 className="fs-h2">Kits</h2>
+        <p className="fs-sub">Everything in one case, ready to plug in.</p>
+        <div className="gk-list">{kits.map((k) => { const info = KITS[k.id]; const to = `${book}&g=${k.id}`; return (
+          <article key={k.id} className="gk">
+            <img className="gk-ph" src={k.img} alt={k.name} loading="lazy" />
+            <div className="gk-main">
+              <h3>{k.name}</h3>
+              <p className="gk-best">{info.best}</p>
+              <div className="gk-pr"><b>{aed(k.price_day)}</b><span>per day</span><em>{aed(k.deposit)} deposit, refunded on return</em></div>
+              <a className="fs-btn y" href={to} onClick={link(to)}>Book this kit {I.arrow({ s: 18 })}</a>
+            </div>
+            <div className="gk-case">
+              <p className="gh">In the case</p>
+              <dl>{info.inCase.map(([q, t]) => <div key={t}><dt>{q}</dt><dd>{t}</dd></div>)}</dl>
+              <p className="gk-sup"><b>You supply</b>{info.supply}</p>
+            </div>
+          </article>); })}
+        </div>
+      </div></section>
+
       <section className="fs-sec alt"><div className="fs-wrap">
-        <div className="fs-head"><div><h2 className="fs-h2">Single items</h2><p className="fs-sub">Add to your own set-up.</p></div></div>
-        <div className="fs-tiles">{items.map((it) => <div key={it.id} className="fs-tile">{(ITEM_ICON[it.id] ?? I.cam)({ s: 28 })}<b>{it.name}</b><span>{it.strap}</span></div>)}</div>
+        <h2 className="fs-h2">Single items</h2>
+        <p className="fs-sub">Add to your own set-up, or to a kit.</p>
+        <div className="gc-grid">{CATS.map((c) => (
+          <div key={c.id} className="gc">
+            <h3>{ICON[c.icon]({ s: 26 })}{c.name}</h3>
+            {c.items.filter((it) => byId[it.id]).map((it) => { const g = byId[it.id]; const to = `${book}&g=${g.id}`; return (
+              <a key={it.id} className="gi" href={to} onClick={link(to)}>
+                <div className="gi-t"><b>{g.name}</b><span>{it.spec}</span></div>
+                <div className="gi-p"><b>{aed(g.price_day)}</b><span>per day, {g.units} available</span></div>
+              </a>); })}
+          </div>))}
+        </div>
       </div></section>
+
       <Faq items={C.rentFaq} />
       <CtaBand title="Book your gear." text="Pick your kit and dates, and see your price straight away." book={book} />
     </Page>

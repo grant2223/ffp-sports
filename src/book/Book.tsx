@@ -4,13 +4,14 @@ import { useCatalogue } from "../lib/catalogue";
 import { api, sb } from "../lib/supabase";
 import { aed, isGear, price, type Catalogue, type Choices, type Dur } from "../lib/pricing";
 import { SPORTS, VENUES } from "../lib/lists";
+import { PRESETS } from "../web/packages";
 
 interface Details { first_name: string; last_name: string; org: string; email: string; phone: string; date: string; time: string; sport: string; venue: string; address: string; notes: string }
 interface State extends Choices { step: number; pkSet: boolean; durSet: boolean; d: Details; code: string; pct: number; codeMsg: string; agree: boolean }
 
 const KEY = "ffpsBooking";
 const blankDetails: Details = { first_name: "", last_name: "", org: "", email: "", phone: "", date: "", time: "", sport: "", venue: "", address: "", notes: "" };
-const blank: State = { step: 1, svc: "", mode: "crew", pk: "", dur: "2h", on: [], edit: "", eon: [], qty: {}, from: "", to: "", hand: "pickup", setup: false, zone: "dubai",
+const blank: State = { step: 1, svc: "", mode: "crew", pk: "", dur: "2h", on: [], edit: "", eon: [], qty: {}, crewq: {}, from: "", to: "", hand: "pickup", setup: false, zone: "dubai",
   pkSet: false, durSet: false, d: blankDetails, code: "", pct: 0, codeMsg: "", agree: false };
 const fresh = (svc: string, keep: State): State => ({ ...blank, d: keep.d, zone: keep.zone, svc, mode: svc === "gear" ? "gear" : keep.mode, step: keep.step });
 
@@ -19,6 +20,11 @@ function initial(): State {
   try { const j = JSON.parse(localStorage.getItem(KEY) || "null"); if (j && typeof j === "object") s = { ...blank, ...j, d: { ...blankDetails, ...(j.d || {}) } }; } catch { /* first visit */ }
   const want = new URLSearchParams(location.search).get("s") || "";
   if (["live", "video", "photo", "pod", "gear"].includes(want) && want !== s.svc) s = { ...fresh(want, s), step: 1 };
+  // a package or gear item picked on the site opens the booking with those choices made
+  const q = new URLSearchParams(location.search), pre = PRESETS[q.get("p") || ""], g = q.get("g") || "";
+  if (pre) s = { ...fresh(pre.svc, s), pk: pre.pk, dur: pre.dur, on: pre.on ?? [], edit: pre.edit ?? "", eon: pre.eon ?? [], pkSet: true, durSet: true, step: 3 };
+  else if (g && want === "gear") s = { ...fresh("gear", s), qty: { [g]: 1 }, step: 2 };
+  if (pre || g) history.replaceState(null, "", "/book?s=" + s.svc);
   return s;
 }
 
@@ -59,7 +65,7 @@ export function Book() {
     }} />;
 }
 
-const pickChoices = (s: State): Choices => ({ svc: s.svc, mode: s.mode, pk: s.pk, dur: s.dur, on: s.on, edit: s.edit, eon: s.eon, qty: s.qty, from: s.from, to: s.to, hand: s.hand, setup: s.setup, zone: s.zone });
+const pickChoices = (s: State): Choices => ({ svc: s.svc, mode: s.mode, pk: s.pk, dur: s.dur, on: s.on, edit: s.edit, eon: s.eon, qty: s.qty, crewq: s.crewq ?? {}, from: s.from, to: s.to, hand: s.hand, setup: s.setup, zone: s.zone });
 
 function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSend }: {
   cat: Catalogue; st: State; put: (p: Partial<State>) => void; gear: boolean; free: Record<string, number> | null;
@@ -111,7 +117,7 @@ function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSen
   const services = [...cat.services.map((s) => ({ id: s.id, name: s.name, strap: s.strap, img: s.img })), { id: "gear", name: "Gear rental", strap: "Cameras and kits, run it yourself", img: "/img/stadiumcam.jpg" }];
   const durList: [Dur, string, string, number][] = pk ? [["2h", "2 hours", "One match or session", pk.price_2h], ["day", "Full day", "Up to 8 hours on site", pk.price_day]] : [];
   if (pk && sv?.season) { const m = Number(cat.settings.season_matches || 10), off = Number(cat.settings.season_off || 0.15); durList.push(["season", "Season", `${m} matches, save ${Math.round(off * 100)}%`, pk.price_2h * m * (1 - off)]); }
-  const addPrice = (e: (typeof adds)[number]) => (e.per_crew_hour ? Number(cat.settings.extra_hour_client || 750) * (pk?.crew || 1) : st.dur === "day" ? e.price_day : e.price_2h);
+  const addPrice = (e: (typeof adds)[number]) => (e.per_crew_hour ? Number(cat.settings.extra_hour_client || 750) * Math.max(1, p.crew) : st.dur === "day" ? e.price_day : e.price_2h);
   const qty = (id: string) => st.qty[id] || 0;
   const setQ = (id: string, units: number, delta: number) => put({ qty: { ...st.qty, [id]: Math.max(0, Math.min(units, qty(id) + delta)) } });
   const toggle = (list: string[], id: string) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]);
@@ -121,10 +127,16 @@ function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSen
     if (e?.pick_group && on.includes(id)) on = on.filter((x) => x === id || adds.find((a) => a.id === x)?.pick_group !== e.pick_group);
     put({ on });
   };
+  const svcRoles = sv ? new Set(cat.serviceRoles.filter((r) => r.service_id === sv.id).map((r) => r.role_id)) : new Set<string>();
+  const crewRoles = cat.roles.filter((r) => svcRoles.has(r.id));
+  const cq = st.crewq ?? {};
+  const roleRate = (r: { client_day: number }) => Math.round(Number(r.client_day) * (st.dur === "day" ? 1 : Number(cat.settings.crew_2h_share || 0.5)));
+  const setCrew = (id: string, delta: number) => { const n = Math.max(0, Math.min(20, (cq[id] || 0) + delta)); const next = { ...cq }; if (n) next[id] = n; else delete next[id]; put({ crewq: next }); };
+  const pickedCrew = crewRoles.filter((r) => cq[r.id]);
   const durName = st.dur === "day" ? "full day" : st.dur === "season" ? "season" : "up to 2 hours";
   const payLines = gear ? (p.deposit ? [{ label: "Refundable deposit, paid with the rental", amt: aed(p.deposit) }] : [])
     : p.split ? [{ label: "To book, 50%", amt: aed(p.total / 2) }, { label: "Before the work starts, 50%", amt: aed(p.total / 2) }] : [];
-  const rvAdds = crew ? [...(hasEdits && editObj ? ["Editing: " + editObj.name] : []), ...(editObj?.price_2h ? eadds.filter((a) => st.eon.includes(a.id)).map((a) => a.name) : []), ...adds.filter((a) => st.on.includes(a.id)).map((a) => a.name)].join(", ") || "None" : st.setup ? "Set-up and handover" : "None";
+  const rvAdds = crew ? [...(hasEdits && editObj ? ["Editing: " + editObj.name] : []), ...(editObj?.price_2h ? eadds.filter((a) => st.eon.includes(a.id)).map((a) => a.name) : []), ...adds.filter((a) => st.on.includes(a.id)).map((a) => a.name), ...pickedCrew.map((r) => (cq[r.id] > 1 ? cq[r.id] + " × " : "") + r.name)].join(", ") || "None" : st.setup ? "Set-up and handover" : "None";
 
   return (
     <Shell footer={false}>
@@ -211,6 +223,12 @@ function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSen
                   {crew && adds.map((a) => <AddRow key={a.id} name={a.name} strap={a.strap} price={addPrice(a)} suffix={st.dur === "season" ? " a match" : ""} on={st.on.includes(a.id)} toggle={() => toggleAdd(a.id)} />)}
                   {gear && <AddRow name="Set-up and handover" strap="An FFP operator sets everything up at your venue and shows your team how to run it." price={Number(cat.settings.setup_handover || 1000)} on={st.setup} toggle={() => put({ setup: !st.setup })} />}
                 </div></div>
+              {crew && crewRoles.length > 0 && <div className="blk crw"><p className="ql">Extra crew<span className="cnote">{st.dur === "day" ? "Day rates" : st.dur === "season" ? "Per match" : "Up to 2 hours"}</span></p>
+                <input className="crw-add" list="crew-roles" placeholder="Search crew roles, e.g. camera operator" value="" onChange={(e) => { const r = crewRoles.find((x) => x.name === e.target.value); if (r) setCrew(r.id, 1); }} />
+                <datalist id="crew-roles">{crewRoles.filter((r) => !cq[r.id]).map((r) => <option key={r.id} value={r.name}>{cat.roleGroups.find((g) => g.id === r.group_id)?.name}</option>)}</datalist>
+                {pickedCrew.map((r) => <div key={r.id} className="gq"><span className="qt"><b>{r.name}</b><i>{aed(roleRate(r))} each{st.dur === "season" ? " a match" : ""}</i></span>
+                  <Stepper q={cq[r.id]} dec={() => setCrew(r.id, -1)} inc={() => setCrew(r.id, 1)} /></div>)}
+              </div>}
             </div>}
 
             {st.step === 4 && crew && <div>

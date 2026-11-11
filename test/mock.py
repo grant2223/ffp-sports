@@ -23,6 +23,18 @@ F['quotes'] = [dict(id='q1', number='FFPS-Q-0144', status='draft', org='Augustus
                     terms=['Dates: drop-off Fri 13 Nov 2026 at 9:00 am.', 'Location: Dubai.'], total=7100, cost=150, created_at=NOW)]
 F['partner_codes'] = []
 F['email_log'] = [dict(id=1, to_email='sara@club.com', subject='We have your request FFPS-R-10001', kind='booking_received', ok=False, error='Email not set up yet (RESEND_API_KEY missing)', created_at=NOW)]
+
+# mirror migration 0005: public role rates without cost, service roles, new add-ons
+import re as _re
+F['role_rates'] = [{k: v for k, v in r.items() if k != 'cost_day'} for r in F['roles']]
+_sql = open('/home/claude/ffp-sports/supabase/migrations/0005_addons_crew.sql').read()
+_ids = {sv: _re.findall(r"'([a-z0-9-]+)'", _re.search(r"select '%s', r.id.*?\);" % sv, _sql, _re.S).group(0).split('in (', 1)[1]) for sv in ('live', 'pod')}
+F['service_roles'] = [dict(service_id=sv, role_id=r['id'], sort=r['sort']) for sv in _ids for r in F['roles'] if r['id'] in _ids[sv]]
+for _m in _re.finditer(r"\('((?:live|pod)-a\d+)','(live|pod)','addon','([^']+)','([^']+)','',(\d+),(\d+),(\d+),(\d+),false,0,null,(\d+)\)", _sql):
+    i, sv, n, st, p2, pd, c2, cd, so = _m.groups()
+    F['extras'].append(dict(id=i, service_id=sv, kind='addon', name=n, strap=st, img='', price_2h=int(p2), price_day=int(pd), cost_2h=int(c2), cost_day=int(cd), per_crew_hour=False, adds_crew=0, pick_group=None, sort=int(so), active=True))
+for _e in F['extras']:
+    if _e['id'] in ('live-a0', 'live-a1', 'live-a2', 'live-a3'): _e['active'] = False
 sent = []
 
 def handle(route, req):

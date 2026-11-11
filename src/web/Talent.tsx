@@ -5,10 +5,10 @@ import C from "./content.json";
 export function Talent() {
   return (
     <Page book="/estimate?talent=1">
-      <section className="fs-phero"><img src="/img/grant.jpg" alt="Commentator at a broadcast desk" style={{ objectPosition: "center 20%" }} />
+      <section className="fs-phero">
         <div className="fs-wrap"><span className="fs-kick">Talent</span>
-          <h1>The voice your event deserves.</h1>
-          <p className="lead">Commentators, MCs and presenters who know sport, booked with your stream or on their own.</p>
+          <h1>Commentators, MCs and presenters.</h1>
+          <p className="lead">Voices who know sport, for your stream or event.</p>
           <div className="fs-ctas"><a className="fs-btn y" href="/estimate?talent=1" onClick={link("/estimate?talent=1")}>Book talent {I.arrow({ s: 20 })}</a></div></div>
       </section>
       <section className="fs-sec"><div className="fs-wrap">

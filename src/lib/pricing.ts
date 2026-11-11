@@ -6,7 +6,10 @@ export interface Pkg { id: string; service_id: string; name: string; strap: stri
 export interface Extra { id: string; service_id: string; kind: "addon" | "edit_level" | "edit_extra"; name: string; strap: string; img: string; price_2h: number; price_day: number; cost_2h: number; cost_day: number; per_crew_hour: boolean; adds_crew: number; pick_group: string | null; sort: number; active: boolean }
 export interface Gear { id: string; kind: "kit" | "item"; name: string; strap: string; detail: string; img: string; price_day: number; units: number; deposit: number; sort: number; active: boolean }
 export interface Zone { id: string; name: string; travel_per_crew: number; delivery: number; sort: number }
-export interface Catalogue { services: Service[]; packages: Pkg[]; extras: Extra[]; gear: Gear[]; zones: Zone[]; settings: Record<string, string> }
+export interface Role { id: string; group_id: string; name: string; client_day: number; cost_day?: number; sort: number; active: boolean }
+export interface RoleGroup { id: string; name: string; sort: number }
+export interface Catalogue { services: Service[]; packages: Pkg[]; extras: Extra[]; gear: Gear[]; zones: Zone[]; settings: Record<string, string>;
+  roles: Role[]; roleGroups: RoleGroup[]; serviceRoles: { service_id: string; role_id: string; sort: number }[] }
 
 export type Dur = "2h" | "day" | "season";
 export interface Choices {
@@ -16,6 +19,7 @@ export interface Choices {
   edit: string;          // editing level (extra id), "" for none
   eon: string[];         // editing extras
   qty: Record<string, number>;
+  crewq?: Record<string, number>; // extra crew by role id
   from: string; to: string; hand: "pickup" | "delivery"; setup: boolean;
   zone: string;
 }
@@ -39,7 +43,7 @@ export function isGear(cat: Catalogue, c: Choices): boolean {
 export function price(cat: Catalogue, c: Choices, codePct = 0): Price {
   const S = cat.settings;
   const lines: Line[] = [];
-  let sub = 0, cost = 0, crew = 0, deposit = 0, days = 0;
+  let sub = 0, cost = 0, crew = 0, deposit = 0, days = 0, crewSub = 0, crewCost = 0;
   const holds: { gear_id: string; qty: number }[] = [];
   const zone = cat.zones.find((z) => z.id === c.zone) || cat.zones.find((z) => z.id === "dubai") || cat.zones[0];
   const svc = cat.services.find((s) => s.id === c.svc);
@@ -54,11 +58,21 @@ export function price(cat: Catalogue, c: Choices, codePct = 0): Price {
       const durName = dayRate ? "full day" : c.dur === "season" ? `season of ${matches} matches` : "up to 2 hours";
       lines.push({ label: `${pk.name}, ${durName}`, v: pPrice }); sub += pPrice;
       crew = pk.crew;
+      // extra crew by role: a day rate, half of it for up to 2 hours, per match on a season
+      const roleFactor = dayRate ? 1 : num(S.crew_2h_share, 0.5);
+      const allowed = new Set(cat.serviceRoles.filter((r) => r.service_id === svc.id).map((r) => r.role_id));
+      for (const r of cat.roles.filter((x) => x.active && allowed.has(x.id)).sort((a, b) => a.sort - b.sort)) {
+        const q = Math.max(0, Math.min(20, Math.floor(c.crewq?.[r.id] || 0)));
+        if (!q) continue;
+        const v = Math.round(Number(r.client_day) * roleFactor) * q * mult;
+        lines.push({ label: `${q > 1 ? q + " × " : ""}${r.name}` + (mult > 1 ? `, ${matches} matches` : ""), v });
+        sub += v; crewSub += v; const rc = Number(r.cost_day || 0) * roleFactor * q * mult; cost += rc; crewCost += rc; crew += q;
+      }
       const groups = new Set<string>();
       for (const e of cat.extras.filter((x) => x.service_id === svc.id && x.kind === "addon" && c.on.includes(x.id)).sort((a, b) => a.sort - b.sort)) {
         if (e.pick_group) { if (groups.has(e.pick_group)) continue; groups.add(e.pick_group); }
-        const per = e.per_crew_hour ? num(S.extra_hour_client, 750) * pk.crew : dayRate ? e.price_day : e.price_2h;
-        const pc = e.per_crew_hour ? num(S.extra_hour_cost, 400) * pk.crew : dayRate ? e.cost_day : e.cost_2h;
+        const per = e.per_crew_hour ? num(S.extra_hour_client, 750) * crew : dayRate ? e.price_day : e.price_2h;
+        const pc = e.per_crew_hour ? num(S.extra_hour_cost, 400) * crew : dayRate ? e.cost_day : e.cost_2h;
         lines.push({ label: e.name + (mult > 1 ? `, ${matches} matches` : ""), v: per * mult }); sub += per * mult; cost += pc * mult; crew += e.adds_crew;
       }
       if (svc.editing && c.edit) {
@@ -92,8 +106,10 @@ export function price(cat: Catalogue, c: Choices, codePct = 0): Price {
     cost += sub * 0.25;
   }
   const floor = num(S.margin_floor, 0.4);
-  const maxOff = Math.max(0, sub - cost / (1 - floor));
-  const disc = codePct > 0 ? Math.min(sub * codePct / 100, maxOff) : 0;
+  // partner discounts never apply to crew roles: their rates already sit at the margin floor
+  const dsub = sub - crewSub, dcost = cost - crewCost;
+  const maxOff = Math.max(0, dsub - dcost / (1 - floor));
+  const disc = codePct > 0 ? Math.min(dsub * codePct / 100, maxOff) : 0;
   if (disc) lines.push({ label: "Partner discount", v: -disc });
   const total = Math.round((sub - disc) * 100) / 100;
   const split = !isGear(cat, c) && total > num(S.split_over, 10000);
