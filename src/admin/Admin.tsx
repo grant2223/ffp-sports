@@ -42,8 +42,8 @@ export default function Admin() {
     <button className="btn ghost" type="button" onClick={() => sb.auth.signOut()}>Sign out</button></div></div>;
 
   return (
-    <ToastProvider>
-      <div className="adm">
+    <div className="adm">
+      <ToastProvider>
         <div className="top"><div className="topin">
           <a href="/" aria-label="FFP Sports site"><img src="/img/logo.png" alt="FFP Sports" /></a>
           <nav className="tabs" aria-label="Admin">{TABS.map(([k, l]) => <button key={k} className={"tab" + (tab === k ? " on" : "")} type="button" onClick={() => pick(k)}>{l}{k === "bookings" && newCount > 0 && <span className="ct">{newCount}</span>}</button>)}</nav>
@@ -57,8 +57,8 @@ export default function Admin() {
         {tab === "crew" && <Crew />}
         {tab === "prices" && <Prices />}
         {tab === "settings" && <SettingsTab />}
-      </div>
-    </ToastProvider>
+      </ToastProvider>
+    </div>
   );
 }
 

@@ -56,3 +56,17 @@ export function EditTable({ table, rows, cols, keyCol = "id", onSaved, extra }: 
     </table></div>
   );
 }
+
+// A full-screen yes/no question, in place of the browser's confirm box.
+export function useAsk(): [ReactNode, (q: { title: string; text?: string; yes: string; danger?: boolean }) => Promise<boolean>] {
+  const [q, setQ] = useState<{ title: string; text?: string; yes: string; danger?: boolean; done: (v: boolean) => void } | null>(null);
+  const ask = useCallback((x: { title: string; text?: string; yes: string; danger?: boolean }) => new Promise<boolean>((done) => setQ({ ...x, done })), []);
+  const end = (v: boolean) => { q?.done(v); setQ(null); };
+  const el = q ? (
+    <div className="ask" role="alertdialog" aria-label={q.title}>
+      <div className="askin"><h2>{q.title}</h2>{q.text && <p>{q.text}</p>}
+        <div className="askb"><button className={"btn " + (q.danger ? "danger" : "gold")} type="button" autoFocus onClick={() => end(true)}>{q.yes}</button>
+          <button className="btn ghost" type="button" onClick={() => end(false)}>Go back</button></div></div>
+    </div>) : null;
+  return [el, ask];
+}

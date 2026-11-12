@@ -60,6 +60,13 @@ _X['pod-e2']['name'] = 'Multi-camera episode edit'
 F['service_roles'] = [r for r in F['service_roles'] if r['role_id'] not in ('commentator', 'co-commentator-or-analyst', 'presenter-or-host', 'mc', 'reporter-or-sideline-interviewer', 'stadium-announcer', 'hype-host-or-dj', 'national-commentator')]
 F['talent_rates'] = [dict(staff_id='t1', first_name='Test', last_name='Talent', photo_url='/img/grant.jpg', role_id='commentator', role_name='Commentator', client_day=2300)]
 F['gear_parts'] = []
+# mirror migrations 0010 and 0011: gear as live, kit contents with notes, sample holds
+import json as _j2
+_live = _j2.load(open('/home/claude/ffp-sports/test/gear_live.json'))
+F['gear'] = _live['gear']; F['gear_parts'] = _live['parts']
+F['gear_holds'] = [dict(id='h1', booking_id='b9', gear_id='kit3', qty=1, date_from='2026-11-20', date_to='2026-11-21', bookings=dict(ref='FFPS-R-10014', status='confirmed', first_name='Kirby', last_name='Lee', org='Augustus Media', handover='pickup')),
+                   dict(id='h2', booking_id='b8', gear_id='pyros', qty=2, date_from='2026-11-22', date_to='2026-11-24', bookings=dict(ref='FFPS-R-10015', status='requested', first_name='Sam', last_name='Hart', org='Dubai Rugby 7s', handover='delivery'))]
+writes = []
 
 F['invoices'] = [dict(id='i1', number='FFPS-INV-0001', status='draft', quote_id=None, booking_id=None, quote_number='FFPS-Q-0143', org='Augustus Media', attention='Kirby', email='kirby@augustusmedia.com',
   subject='Camera rental, 8 Sony PXW-Z200 kits', issue_date='2026-11-12', due_date='2026-11-12', total=7100, paid=0, created_at=NOW, sent_at=None, paid_at=None,
@@ -91,6 +98,17 @@ def handle(route, req):
             v = v[0]
             if v.startswith('eq.'): rows = [r for r in rows if str(r.get(k.split('.')[-1])).lower() == v[3:].lower()]
             elif v.startswith('in.('): vals = v[4:-1].split(','); rows = [r for r in rows if str(r.get(k)) in [x.strip('"') for x in vals]]
+        if req.method in ('POST', 'PATCH', 'DELETE') and t in ('gear', 'gear_parts'):
+            body = json.loads(req.post_data or 'null'); writes.append((req.method, t, dict((k, v[0]) for k, v in q.items()), body))
+            if req.method == 'POST':
+                for nb in (body if isinstance(body, list) else [body]):
+                    old = [r for r in F[t] if t == 'gear_parts' and r['kit_id'] == nb['kit_id'] and r['item_id'] == nb['item_id']]
+                    if old: old[0].update(nb)
+                    else: F[t].append(nb)
+            if req.method == 'PATCH':
+                for r in rows: r.update(body)
+            if req.method == 'DELETE': F[t] = [r for r in F[t] if r not in rows]
+            return J([] if req.method == 'DELETE' else (body if isinstance(body, list) else [body]), 201)
         if req.method != 'GET': return J(rows[:1] if 'single' not in (req.headers.get('accept') or '') else (rows[0] if rows else {}), 201)
         if 'vnd.pgrst.object' in (req.headers.get('accept') or ''): return J(rows[0] if rows else {})
         if req.method == 'HEAD' or (req.headers.get('prefer') or '').find('count') >= 0: return route.fulfill(status=200, headers={'content-range': '0-%d/%d' % (len(rows), len([r for r in rows])), 'access-control-allow-origin': '*', 'access-control-expose-headers': 'content-range'}, body='[]')

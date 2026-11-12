@@ -1,0 +1,333 @@
+{
+ "gear": [
+  {
+   "id": "kit1",
+   "kind": "kit",
+   "name": "Single-camera stream kit",
+   "img": "/img/stadiumcam.jpg",
+   "units": 3,
+   "price_day": 1850.0,
+   "purchase_price": null,
+   "specs": [
+    "2 camera batteries (standard Sony and a larger SWIT), charger, HDMI cable, power cables and carry bag"
+   ],
+   "best": "",
+   "supply": "",
+   "strap": "Sony Z200 4K camera, YoloBox Ultra streamer, DJI Mic 3, tripod",
+   "category": "Kits",
+   "sort": 0,
+   "active": true,
+   "deposit": 0,
+   "detail": ""
+  },
+  {
+   "id": "kit3",
+   "kind": "kit",
+   "name": "3-camera wireless kit",
+   "img": "/img/gymcam.jpg",
+   "units": 1,
+   "price_day": 2600.0,
+   "purchase_price": null,
+   "specs": [
+    "NP-F970 batteries for the wireless sets, cables, power and carry cases"
+   ],
+   "best": "Three angles of one pitch, switched live, with 2 commentators.",
+   "supply": "Internet, and a power point at the commentary table.",
+   "strap": "3 auto-tracking 4K cameras, YoloBox Extreme, commentary for 2",
+   "category": "Kits",
+   "sort": 1,
+   "active": true,
+   "deposit": 0,
+   "detail": ""
+  },
+  {
+   "id": "vmix",
+   "kind": "kit",
+   "name": "vMix production system",
+   "img": "/img/desk.jpg",
+   "units": 1,
+   "price_day": 1950.0,
+   "purchase_price": null,
+   "specs": [
+    "1 × Production PC: Intel Core i9, 64 GB RAM, latest licensed vMix",
+    "2 × Blackmagic DeckLink capture cards: 8 SDI connections"
+   ],
+   "best": "",
+   "supply": "",
+   "strap": "i9 vMix PC, 8 SDI connections, 2 monitors, control surface",
+   "category": "Kits",
+   "sort": 2,
+   "active": true,
+   "deposit": 0,
+   "detail": ""
+  },
+  {
+   "id": "podk",
+   "kind": "kit",
+   "name": "Podcast kit",
+   "img": "/img/pod.jpg",
+   "units": 1,
+   "price_day": 1100.0,
+   "purchase_price": null,
+   "specs": [
+    "4 × Shure MV7+ dynamic microphones on desk arms",
+    "Cables and carry cases"
+   ],
+   "best": "",
+   "supply": "",
+   "strap": "4 Shure MV7+ mics, RODECaster Pro II, 4 Neewer lights with softboxes",
+   "category": "Kits",
+   "sort": 3,
+   "active": true,
+   "deposit": 0,
+   "detail": ""
+  },
+  {
+   "id": "z200",
+   "kind": "item",
+   "name": "Sony Z200 camera",
+   "img": "",
+   "units": 3,
+   "price_day": 750.0,
+   "purchase_price": 15000.0,
+   "specs": [
+    "1-inch stacked sensor: 4K up to 60 fps",
+    "20x optical zoom, 24–480 mm (30x in 4K with Clear Image Zoom)"
+   ],
+   "best": "",
+   "supply": "",
+   "strap": "4K broadcast camcorder, 1-inch sensor, 20x zoom",
+   "category": "Cameras",
+   "sort": 14,
+   "active": true,
+   "deposit": 0,
+   "detail": ""
+  },
+  {
+   "id": "yolou",
+   "kind": "item",
+   "name": "YoloBox Ultra",
+   "img": "",
+   "units": 3,
+   "price_day": 450.0,
+   "purchase_price": 5600.0,
+   "specs": [],
+   "best": "",
+   "supply": "",
+   "strap": "Streams, switches and records up to 4 cameras, 4G built in",
+   "category": "Streaming and switching",
+   "sort": 15,
+   "active": true,
+   "deposit": 0,
+   "detail": ""
+  },
+  {
+   "id": "yoloe",
+   "kind": "item",
+   "name": "YoloBox Extreme",
+   "img": "",
+   "units": 1,
+   "price_day": 600.0,
+   "purchase_price": 8000.0,
+   "specs": [],
+   "best": "",
+   "supply": "",
+   "strap": "Streams, switches and records up to 8 cameras, 11.2-inch screen",
+   "category": "Streaming and switching",
+   "sort": 16,
+   "active": true,
+   "deposit": 0,
+   "detail": ""
+  },
+  {
+   "id": "tail2",
+   "kind": "item",
+   "name": "OBSBOT Tail 2",
+   "img": "",
+   "units": 3,
+   "price_day": 350.0,
+   "purchase_price": 5000.0,
+   "specs": [],
+   "best": "",
+   "supply": "",
+   "strap": "4K camera that follows play on its own",
+   "category": "Cameras",
+   "sort": 17,
+   "active": true,
+   "deposit": 0,
+   "detail": ""
+  },
+  {
+   "id": "djimic",
+   "kind": "item",
+   "name": "DJI Mic 3 set",
+   "img": "",
+   "units": 3,
+   "price_day": 200.0,
+   "purchase_price": 1400.0,
+   "specs": [],
+   "best": "",
+   "supply": "",
+   "strap": "2 clip-on wireless mics and a receiver, 400 m range",
+   "category": "Audio and commentary",
+   "sort": 18,
+   "active": true,
+   "deposit": 0,
+   "detail": ""
+  },
+  {
+   "id": "rode",
+   "kind": "item",
+   "name": "RODECaster Pro II",
+   "img": "",
+   "units": 1,
+   "price_day": 250.0,
+   "purchase_price": 2300.0,
+   "specs": [],
+   "best": "",
+   "supply": "",
+   "strap": "4-mic audio mixer, records each voice on its own track",
+   "category": "Audio and commentary",
+   "sort": 19,
+   "active": true,
+   "deposit": 0,
+   "detail": ""
+  },
+  {
+   "id": "hset",
+   "kind": "item",
+   "name": "Broadcast headset",
+   "img": "",
+   "units": 2,
+   "price_day": 100.0,
+   "purchase_price": 750.0,
+   "specs": [],
+   "best": "",
+   "supply": "",
+   "strap": "Audio-Technica BPHS1: closed headphones with a boom mic, for commentators",
+   "category": "Audio and commentary",
+   "sort": 20,
+   "active": true,
+   "deposit": 0,
+   "detail": ""
+  },
+  {
+   "id": "tripod",
+   "kind": "item",
+   "name": "Video tripod with fluid head",
+   "img": "",
+   "units": 8,
+   "price_day": 100.0,
+   "purchase_price": 1500.0,
+   "specs": [],
+   "best": "",
+   "supply": "",
+   "strap": "SmallRig AD-01: fluid head, up to 186 cm, holds 8 kg",
+   "category": "Support",
+   "sort": 21,
+   "active": true,
+   "deposit": 0,
+   "detail": ""
+  },
+  {
+   "id": "pyros",
+   "kind": "item",
+   "name": "Hollyland Pyro S wireless video set",
+   "img": "",
+   "units": 6,
+   "price_day": 150.0,
+   "purchase_price": 1600.0,
+   "specs": [
+    "1 transmitter and 1 receiver, with antennas",
+    "Up to 400 m line of sight, 50 ms delay"
+   ],
+   "best": "",
+   "supply": "",
+   "strap": "Sends a camera to the switcher without a cable, up to 400 m",
+   "category": "Wireless video",
+   "sort": 22,
+   "active": true,
+   "deposit": 0,
+   "detail": ""
+  }
+ ],
+ "parts": [
+  {
+   "kit_id": "kit1",
+   "item_id": "z200",
+   "qty": 1,
+   "note": "4K camcorder, 1-inch sensor, 20x optical zoom (24–480 mm), 2 XLR audio inputs",
+   "sort": 1
+  },
+  {
+   "kit_id": "kit1",
+   "item_id": "tripod",
+   "qty": 1,
+   "note": "SmallRig AD-01, 85–186 cm working height, holds up to 8 kg",
+   "sort": 2
+  },
+  {
+   "kit_id": "kit1",
+   "item_id": "yolou",
+   "qty": 1,
+   "note": "8-inch touchscreen, streams and records, adds a live scoreboard and your logo",
+   "sort": 3
+  },
+  {
+   "kit_id": "kit1",
+   "item_id": "djimic",
+   "qty": 1,
+   "note": "2 clip-on transmitters and a receiver, up to 400 m range",
+   "sort": 4
+  },
+  {
+   "kit_id": "kit3",
+   "item_id": "tail2",
+   "qty": 3,
+   "note": "4K cameras that follow play on their own with AI tracking, 5x optical zoom",
+   "sort": 1
+  },
+  {
+   "kit_id": "kit3",
+   "item_id": "pyros",
+   "qty": 3,
+   "note": "each camera sends to the switcher without a cable, up to 400 m line of sight, 4K 30 fps, 50 ms delay",
+   "sort": 2
+  },
+  {
+   "kit_id": "kit3",
+   "item_id": "tripod",
+   "qty": 3,
+   "note": "SmallRig AD-01",
+   "sort": 3
+  },
+  {
+   "kit_id": "kit3",
+   "item_id": "yoloe",
+   "qty": 1,
+   "note": "11.2-inch touchscreen, switches the 3 cameras, streams and records each camera separately",
+   "sort": 4
+  },
+  {
+   "kit_id": "kit3",
+   "item_id": "rode",
+   "qty": 1,
+   "note": "records each commentator on their own track",
+   "sort": 5
+  },
+  {
+   "kit_id": "kit3",
+   "item_id": "hset",
+   "qty": 2,
+   "note": "Audio-Technica BPHS1, closed-back headphones with a boom mic",
+   "sort": 6
+  },
+  {
+   "kit_id": "podk",
+   "item_id": "rode",
+   "qty": 1,
+   "note": "4 mic inputs, 4 headphone outputs, records each voice on its own track",
+   "sort": 1
+  }
+ ]
+}
