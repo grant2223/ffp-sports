@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { aed, type Catalogue, type Choices, isGear, price, rentalDays } from "./pricing.ts";
+import { aed, type Catalogue, type Choices, isGear, price, rentalDays, talentKey } from "./pricing.ts";
 import { bookingReceived, adminAlert, confirmation, paymentReceipt, declined, quoteEmail, estimateReceived, wrap } from "./emails.ts";
 
 const cors = {
@@ -14,7 +14,7 @@ const fail = (msg: string, status = 400) => new Response(JSON.stringify({ error:
 const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 
 async function catalogue(): Promise<Catalogue> {
-  const [s, p, e, g, z, st, ro, rg, sr] = await Promise.all([
+  const [s, p, e, g, z, st, ro, rg, sr, tl, sx] = await Promise.all([
     db.from("services").select("*").eq("active", true),
     db.from("packages").select("*").eq("active", true),
     db.from("extras").select("*").eq("active", true),
@@ -24,10 +24,14 @@ async function catalogue(): Promise<Catalogue> {
     db.from("roles").select("id,group_id,name,client_day,cost_day,sort,active").eq("active", true),
     db.from("role_groups").select("*"),
     db.from("service_roles").select("*"),
+    db.from("talent_rates").select("*"),
+    db.from("staff_roles").select("staff_id,role_id,day_rate"),
   ]);
+  const cost = new Map((sx.data ?? []).map((x) => [x.staff_id + ":" + x.role_id, Number(x.day_rate) || 0]));
+  const talent = (tl.data ?? []).map((t) => ({ ...t, cost_day: cost.get(t.staff_id + ":" + t.role_id) ?? 0 }));
   const settings: Record<string, string> = {};
   for (const r of st.data ?? []) settings[r.key] = r.value;
-  return { services: s.data ?? [], packages: p.data ?? [], extras: e.data ?? [], gear: g.data ?? [], zones: z.data ?? [], settings, roles: ro.data ?? [], roleGroups: rg.data ?? [], serviceRoles: sr.data ?? [] } as Catalogue;
+  return { services: s.data ?? [], packages: p.data ?? [], extras: e.data ?? [], gear: g.data ?? [], zones: z.data ?? [], settings, roles: ro.data ?? [], roleGroups: rg.data ?? [], serviceRoles: sr.data ?? [], talent } as Catalogue;
 }
 
 async function send(to: string[], subject: string, html: string, kind: string, ids: { booking_id?: string; quote_id?: string }, from: string) {
@@ -134,7 +138,10 @@ Deno.serve(async (req) => {
         const allowed = new Set(cat.serviceRoles.filter((x) => x.service_id === c.svc).map((x) => x.role_id));
         for (const [rid, q] of Object.entries(c.crewq ?? {})) if (allowed.has(rid)) for (let i = 0; i < Math.min(20, Math.floor(Number(q) || 0)); i++) roles.push(rid);
         const { data: rr } = await db.from("roles").select("id,cost_day").in("id", roles);
-        await db.from("assignments").insert(roles.map((r) => ({ booking_id: b.id, role_id: r, day_rate: rr?.find((x) => x.id === r)?.cost_day ?? 0 })));
+        const rows: { booking_id: string; role_id: string; day_rate: number; staff_id?: string }[] = roles.map((r) => ({ booking_id: b.id, role_id: r, day_rate: rr?.find((x) => x.id === r)?.cost_day ?? 0 }));
+        const tk = new Set(c.talent ?? []);
+        for (const t of cat.talent.filter((x) => tk.has(talentKey(x)))) rows.push({ booking_id: b.id, role_id: t.role_id, staff_id: t.staff_id, day_rate: t.cost_day ?? 0 });
+        await db.from("assignments").insert(rows);
       }
       const view = { ...b, lines: p.lines, svcName: gear ? "Gear rental" : svcRow?.name ?? "", days: p.days || rentalDays(c.from, c.to) };
       await send([email], `We have your request ${b.ref}`, W(bookingReceived(view, S)), "booking_received", { booking_id: b.id }, from);

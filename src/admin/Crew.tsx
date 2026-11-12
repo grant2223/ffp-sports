@@ -37,13 +37,13 @@ export function Crew() {
 
 function Person({ id, roles, skills, onClose }: { id: string; roles: Row[]; skills: Row[]; onClose: () => void }) {
   const toast = useToast();
-  const [p, setP] = useState<Row>({ first_name: "", middle_names: "", last_name: "", email: "", phone: "", is_admin: false, is_crew: true, active: true, notes: "" });
+  const [p, setP] = useState<Row>({ first_name: "", middle_names: "", last_name: "", email: "", phone: "", is_admin: false, is_crew: true, active: true, notes: "", talent_markup: 0.15 });
   const [mine, setMine] = useState<Row[]>(skills.filter((k) => k.staff_id === id));
   const [pick, setPick] = useState("");
   useEffect(() => { if (id !== "new") sb.from("staff").select("*").eq("id", id).single().then(({ data }) => data && setP(data)); }, [id]);
   const save = async () => {
     if (!p.first_name || !p.last_name || !/.+@.+\..+/.test(p.email)) { toast("Add first name, last name and email"); return; }
-    const row = { first_name: p.first_name, middle_names: p.middle_names, last_name: p.last_name, email: p.email.trim().toLowerCase(), phone: p.phone, is_admin: p.is_admin, is_crew: p.is_crew, active: p.active, notes: p.notes };
+    const row = { photo_url: p.photo_url || null, first_name: p.first_name, middle_names: p.middle_names, last_name: p.last_name, email: p.email.trim().toLowerCase(), phone: p.phone, is_admin: p.is_admin, is_crew: p.is_crew, active: p.active, notes: p.notes, talent_markup: Math.min(0.2, Math.max(0.1, Number(p.talent_markup ?? 0.15))) };
     const r = id === "new" ? await sb.from("staff").insert(row).select().single() : await sb.from("staff").update(row).eq("id", id).select().single();
     if (r.error) { toast(r.error.message); return; }
     const sid = r.data.id;
@@ -52,6 +52,14 @@ function Person({ id, roles, skills, onClose }: { id: string; roles: Row[]; skil
     toast("Saved"); onClose();
   };
   const f = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setP({ ...p, [k]: e.target.value });
+  const isTalent = mine.some((m) => roles.find((r) => r.id === m.role_id)?.group_id === "talent");
+  const upload = async (file?: File) => {
+    if (!file) return;
+    const path = `staff/${crypto.randomUUID()}.${(file.name.split(".").pop() || "jpg").toLowerCase()}`;
+    const up = await sb.storage.from("site").upload(path, file, { contentType: file.type, upsert: false });
+    if (up.error) { toast(up.error.message); return; }
+    setP({ ...p, photo_url: sb.storage.from("site").getPublicUrl(path).data.publicUrl });
+  };
   return (
     <Full title={id === "new" ? "Add a person" : `${p.first_name} ${p.last_name}`} onClose={onClose} actions={<button className="btn gold" type="button" onClick={save}>Save</button>}>
       <div className="cols">
@@ -67,6 +75,11 @@ function Person({ id, roles, skills, onClose }: { id: string; roles: Row[]; skil
             <label className="fld"><span>Access</span><select value={p.is_admin ? "admin" : "crew"} onChange={(e) => setP({ ...p, is_admin: e.target.value === "admin" })}><option value="crew">Crew</option><option value="admin">Admin, full access</option></select></label>
             <label className="fld"><span>Status</span><select value={p.active ? "1" : "0"} onChange={(e) => setP({ ...p, active: e.target.value === "1" })}><option value="1">Active</option><option value="0">Inactive</option></select></label>
           </div>
+          <div className="line" style={{ marginTop: 12, alignItems: "center", gap: 14 }}>
+            {p.photo_url ? <img src={p.photo_url} alt="" style={{ width: 72, height: 72, objectFit: "cover", borderRadius: 6 }} /> : <span style={{ width: 72, height: 72, borderRadius: 6, background: "#E8E8E4", display: "inline-block" }} />}
+            <label className="btn plain" style={{ cursor: "pointer" }}>{p.photo_url ? "Change photo" : "Upload photo"}<input type="file" accept="image/*" hidden onChange={(e) => upload(e.target.files?.[0])} /></label>
+            <span className="muted sm">Shown to clients when they book this person as talent.</span>
+          </div>
           <label className="fld" style={{ marginTop: 12 }}><span>Notes</span><textarea rows={3} value={p.notes} onChange={f("notes")} /></label>
         </div>
         <div className="card"><h2>Roles they do</h2>
@@ -79,6 +92,11 @@ function Person({ id, roles, skills, onClose }: { id: string; roles: Row[]; skil
               <input type="number" placeholder="Their day rate" value={m.day_rate ?? ""} style={{ width: 150 }} onChange={(e) => setMine(mine.map((x, j) => (j === i ? { ...x, day_rate: e.target.value ? Number(e.target.value) : null } : x)))} />
               <button className="btn plain" type="button" onClick={() => setMine(mine.filter((_, j) => j !== i))}>Remove</button></div>); })}
           {!mine.length && <p className="muted">No roles yet.</p>}
+          {isTalent && <label className="fld" style={{ marginTop: 14 }}><span>FFP markup on their talent rate</span>
+            <select value={String(p.talent_markup ?? 0.15)} onChange={(e) => setP({ ...p, talent_markup: Number(e.target.value) })}>
+              {[0.1, 0.12, 0.15, 0.18, 0.2].map((m) => <option key={m} value={String(m)}>{Math.round(m * 100)}%</option>)}</select></label>}
+          {isTalent && mine.filter((m) => roles.find((r) => r.id === m.role_id)?.group_id === "talent" && m.day_rate).map((m) => (
+            <p key={m.role_id} className="muted sm" style={{ marginTop: 6 }}>{roles.find((r) => r.id === m.role_id)?.name}: clients pay {money(Math.round(Number(m.day_rate) * (1 + Number(p.talent_markup ?? 0.15))))} a day, {money(Math.round(Number(m.day_rate) * (1 + Number(p.talent_markup ?? 0.15)) / 2))} for up to 2 hours</p>))}
         </div>
       </div>
     </Full>

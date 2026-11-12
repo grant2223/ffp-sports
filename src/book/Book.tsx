@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Shell } from "../site/Static";
 import { useCatalogue } from "../lib/catalogue";
 import { api, sb } from "../lib/supabase";
-import { aed, isGear, price, type Catalogue, type Choices, type Dur } from "../lib/pricing";
+import { talentKey, aed, isGear, price, type Catalogue, type Choices, type Dur } from "../lib/pricing";
 import { SPORTS, VENUES } from "../lib/lists";
 import { PRESETS } from "../web/packages";
 
@@ -11,7 +11,7 @@ interface State extends Choices { step: number; pkSet: boolean; durSet: boolean;
 
 const KEY = "ffpsBooking";
 const blankDetails: Details = { first_name: "", last_name: "", org: "", email: "", phone: "", date: "", time: "", sport: "", venue: "", address: "", notes: "" };
-const blank: State = { step: 1, svc: "", mode: "crew", pk: "", dur: "2h", on: [], edit: "", eon: [], qty: {}, crewq: {}, from: "", to: "", hand: "pickup", setup: false, zone: "dubai",
+const blank: State = { step: 1, svc: "", mode: "crew", pk: "", dur: "2h", on: [], edit: "", eon: [], qty: {}, crewq: {}, talent: [], from: "", to: "", hand: "pickup", setup: false, zone: "dubai",
   pkSet: false, durSet: false, d: blankDetails, code: "", pct: 0, codeMsg: "", agree: false };
 const fresh = (svc: string, keep: State): State => ({ ...blank, d: keep.d, zone: keep.zone, svc, mode: svc === "gear" ? "gear" : keep.mode, step: keep.step });
 
@@ -65,7 +65,7 @@ export function Book() {
     }} />;
 }
 
-const pickChoices = (s: State): Choices => ({ svc: s.svc, mode: s.mode, pk: s.pk, dur: s.dur, on: s.on, edit: s.edit, eon: s.eon, qty: s.qty, crewq: s.crewq ?? {}, from: s.from, to: s.to, hand: s.hand, setup: s.setup, zone: s.zone });
+const pickChoices = (s: State): Choices => ({ svc: s.svc, mode: s.mode, pk: s.pk, dur: s.dur, on: s.on, edit: s.edit, eon: s.eon, qty: s.qty, crewq: s.crewq ?? {}, talent: s.talent ?? [], from: s.from, to: s.to, hand: s.hand, setup: s.setup, zone: s.zone });
 
 function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSend }: {
   cat: Catalogue; st: State; put: (p: Partial<State>) => void; gear: boolean; free: Record<string, number> | null;
@@ -133,10 +133,13 @@ function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSen
   const roleRate = (r: { client_day: number }) => Math.round(Number(r.client_day) * (st.dur === "day" ? 1 : Number(cat.settings.crew_2h_share || 0.5)));
   const setCrew = (id: string, delta: number) => { const n = Math.max(0, Math.min(20, (cq[id] || 0) + delta)); const next = { ...cq }; if (n) next[id] = n; else delete next[id]; put({ crewq: next }); };
   const pickedCrew = crewRoles.filter((r) => cq[r.id]);
+  const talentOn = crew && sv && ["live", "pod"].includes(sv.id);
+  const tsel = st.talent ?? [];
+  const pickedTalent = cat.talent.filter((t) => tsel.includes(talentKey(t)));
   const durName = st.dur === "day" ? "full day" : st.dur === "season" ? "season" : "up to 2 hours";
   const payLines = gear ? (p.deposit ? [{ label: "Refundable deposit, paid with the rental", amt: aed(p.deposit) }] : [])
     : p.split ? [{ label: "To book, 50%", amt: aed(p.total / 2) }, { label: "Before the work starts, 50%", amt: aed(p.total / 2) }] : [];
-  const rvAdds = crew ? [...(hasEdits && editObj ? ["Editing: " + editObj.name] : []), ...(editObj?.price_2h ? eadds.filter((a) => st.eon.includes(a.id)).map((a) => a.name) : []), ...adds.filter((a) => st.on.includes(a.id)).map((a) => a.name), ...pickedCrew.map((r) => (cq[r.id] > 1 ? cq[r.id] + " × " : "") + r.name)].join(", ") || "None" : st.setup ? "Set-up and handover" : "None";
+  const rvAdds = crew ? [...(hasEdits && editObj ? ["Editing: " + editObj.name] : []), ...(editObj?.price_2h ? eadds.filter((a) => st.eon.includes(a.id)).map((a) => a.name) : []), ...adds.filter((a) => st.on.includes(a.id)).map((a) => a.name), ...pickedCrew.map((r) => (cq[r.id] > 1 ? cq[r.id] + " × " : "") + r.name), ...pickedTalent.map((t) => `${t.role_name}: ${t.first_name} ${t.last_name}`)].join(", ") || "None" : st.setup ? "Set-up and handover" : "None";
 
   return (
     <Shell footer={false}>
@@ -231,6 +234,14 @@ function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSen
                 {pickedCrew.some((r) => r.group_id === "cameras" && r.id !== "camera-assistant") && <p className="cnote2">Camera operators come without a camera. Add a camera from the add-ons above.</p>}
                 {pickedCrew.map((r) => <div key={r.id} className="gq"><span className="qt"><b>{r.name}</b><i>{aed(roleRate(r))} each{st.dur === "season" ? " a match" : ""}</i></span>
                   <Stepper q={cq[r.id]} dec={() => setCrew(r.id, -1)} inc={() => setCrew(r.id, 1)} /></div>)}
+              </div>}
+              {talentOn && <div className="blk tal"><p className="ql">Talent<span className="cnote">Commentators, MCs and hosts set their own rates</span></p>
+                {cat.talent.length ? <div className="tal-g">{cat.talent.map((t) => { const k = talentKey(t), on = tsel.includes(k); return (
+                  <button key={k} type="button" role="checkbox" aria-checked={on} className={"tal-c" + (on ? " on" : "")} onClick={() => put({ talent: on ? tsel.filter((x) => x !== k) : [...tsel, k] })}>
+                    {t.photo_url ? <img src={t.photo_url} alt="" /> : <span className="tal-ph" />}
+                    <span className="qt"><b>{t.first_name} {t.last_name}</b><small>{t.role_name}</small><i>{aed(roleRate(t))}{st.dur === "season" ? " a match" : ""}</i></span>
+                    <span className={"sw" + (on ? " on" : "")}></span></button>); })}</div>
+                : <p className="cnote2">Need a commentator, MC or host? <a href="/estimate?talent=1">Get an estimate</a> and we will match one to your event.</p>}
               </div>}
             </div>}
 

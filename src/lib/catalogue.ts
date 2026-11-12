@@ -11,7 +11,7 @@ export function loadCatalogue(fresh = false): Promise<Catalogue> {
   if (cache && !fresh && Date.now() - loadedAt < STALE_MS) return cache;
   loadedAt = Date.now();
   cache = (async () => {
-    const [s, p, e, g, z, st, ro, rg, sr] = await Promise.all([
+    const [s, p, e, g, z, st, ro, rg, sr, tl] = await Promise.all([
       sb.from("services").select("*").eq("active", true).order("sort"),
       sb.from("packages").select("*").eq("active", true).order("sort"),
       sb.from("extras").select("*").eq("active", true).order("sort"),
@@ -21,12 +21,13 @@ export function loadCatalogue(fresh = false): Promise<Catalogue> {
       sb.from("role_rates").select("*").eq("active", true).order("sort"),
       sb.from("role_groups").select("*").order("sort"),
       sb.from("service_roles").select("*").order("sort"),
+      sb.from("talent_rates").select("*").order("first_name"),
     ]);
-    const err = s.error || p.error || e.error || g.error || z.error || ro.error || rg.error || sr.error;
+    const err = s.error || p.error || e.error || g.error || z.error || ro.error || rg.error || sr.error || tl.error;
     if (err) throw err;
     const settings: Record<string, string> = {};
     for (const r of st.data ?? []) settings[r.key] = r.value;
-    return { services: s.data ?? [], packages: p.data ?? [], extras: e.data ?? [], gear: g.data ?? [], zones: z.data ?? [], settings, roles: ro.data ?? [], roleGroups: rg.data ?? [], serviceRoles: sr.data ?? [] } as Catalogue;
+    return { services: s.data ?? [], packages: p.data ?? [], extras: e.data ?? [], gear: g.data ?? [], zones: z.data ?? [], settings, roles: ro.data ?? [], roleGroups: rg.data ?? [], serviceRoles: sr.data ?? [], talent: tl.data ?? [] } as Catalogue;
   })();
   cache.catch(() => { cache = null; });
   cache.then((c) => subs.forEach((f) => f(c)), () => {});

@@ -55,6 +55,11 @@ import json as _json
 for _k, _v in _json.load(open('/home/claude/ffp-sports/test/details.json')).items():
     if _k in _X: _X[_k]['details'] = _v
 _X['pod-e2']['name'] = 'Multi-camera episode edit'
+
+# mirror migration 0008 (test talent so the booking shows a card)
+F['service_roles'] = [r for r in F['service_roles'] if r['role_id'] not in ('commentator', 'co-commentator-or-analyst', 'presenter-or-host', 'mc', 'reporter-or-sideline-interviewer', 'stadium-announcer', 'hype-host-or-dj', 'national-commentator')]
+F['talent_rates'] = [dict(staff_id='t1', first_name='Test', last_name='Talent', photo_url='/img/grant.jpg', role_id='commentator', role_name='Commentator', client_day=2300)]
+F['gear_parts'] = []
 sent = []
 
 def handle(route, req):

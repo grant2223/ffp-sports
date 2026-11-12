@@ -19,6 +19,7 @@ export function CrewAddons({ svc }: { svc: string }) {
   return (
     <div className="cr">
       <div className="cr-head"><h3>Crew</h3><p>Day rates. Up to 2 hours is half the day rate.</p></div>
+      {(svc === "live" || svc === "pod") && <p className="cr-tal">Commentators, MCs and hosts set their own rates. <a href="/talent">See our talent</a>.</p>}
       <div className="cr-grid">{shown.map(({ g, rs }) => (
         <div key={g.id} className="cr-g">
           <h4>{g.name}</h4>

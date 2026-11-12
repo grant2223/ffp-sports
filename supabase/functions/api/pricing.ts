@@ -3,13 +3,15 @@
 
 export interface Service { id: string; name: string; strap: string; img: string; gearable: boolean; season: boolean; editing: boolean; sort: number; active: boolean }
 export interface Pkg { id: string; service_id: string; name: string; strap: string; img: string; crew: number; price_2h: number; price_day: number; cost_2h: number; cost_day: number; items: { t: string; d: string }[]; sort: number; active: boolean }
-export interface Extra { id: string; service_id: string; kind: "addon" | "edit_level" | "edit_extra"; name: string; strap: string; img: string; price_2h: number; price_day: number; cost_2h: number; cost_day: number; per_crew_hour: boolean; adds_crew: number; pick_group: string | null; sort: number; active: boolean }
+export interface Extra { id: string; service_id: string; kind: "addon" | "edit_level" | "edit_extra"; name: string; strap: string; img: string; price_2h: number; price_day: number; cost_2h: number; cost_day: number; per_crew_hour: boolean; adds_crew: number; pick_group: string | null; sort: number; active: boolean; details?: string[] }
 export interface Gear { id: string; kind: "kit" | "item"; name: string; strap: string; detail: string; img: string; price_day: number; units: number; deposit: number; sort: number; active: boolean }
 export interface Zone { id: string; name: string; travel_per_crew: number; delivery: number; sort: number }
 export interface Role { id: string; group_id: string; name: string; client_day: number; cost_day?: number; sort: number; active: boolean }
 export interface RoleGroup { id: string; name: string; sort: number }
+export interface Talent { staff_id: string; first_name: string; last_name: string; photo_url: string | null; role_id: string; role_name: string; client_day: number; cost_day?: number }
 export interface Catalogue { services: Service[]; packages: Pkg[]; extras: Extra[]; gear: Gear[]; zones: Zone[]; settings: Record<string, string>;
-  roles: Role[]; roleGroups: RoleGroup[]; serviceRoles: { service_id: string; role_id: string; sort: number }[] }
+  roles: Role[]; roleGroups: RoleGroup[]; serviceRoles: { service_id: string; role_id: string; sort: number }[]; talent: Talent[] }
+export const talentKey = (t: { staff_id: string; role_id: string }) => t.staff_id + ":" + t.role_id;
 
 export type Dur = "2h" | "day" | "season";
 export interface Choices {
@@ -20,6 +22,7 @@ export interface Choices {
   eon: string[];         // editing extras
   qty: Record<string, number>;
   crewq?: Record<string, number>; // extra crew by role id
+  talent?: string[];              // talent booked by person, "staff_id:role_id"
   from: string; to: string; hand: "pickup" | "delivery"; setup: boolean;
   zone: string;
 }
@@ -68,6 +71,13 @@ export function price(cat: Catalogue, c: Choices, codePct = 0): Price {
         lines.push({ label: `${q > 1 ? q + " × " : ""}${r.name}` + (mult > 1 ? `, ${matches} matches` : ""), v });
         sub += v; crewSub += v; const rc = Number(r.cost_day || 0) * roleFactor * q * mult; cost += rc; crewCost += rc; crew += q;
       }
+      // talent set their own day rate (FFP's markup is already in client_day); half of it for up to 2 hours
+      const tk = new Set(c.talent ?? []);
+      for (const t of cat.talent.filter((x) => tk.has(talentKey(x)))) {
+        const v = Math.round(Number(t.client_day) * roleFactor) * mult;
+        lines.push({ label: `${t.role_name}: ${t.first_name} ${t.last_name}` + (mult > 1 ? `, ${matches} matches` : ""), v });
+        sub += v; crewSub += v; const tc = Number(t.cost_day || 0) * roleFactor * mult; cost += tc; crewCost += tc; crew += 1;
+      }
       const groups = new Set<string>();
       for (const e of cat.extras.filter((x) => x.service_id === svc.id && x.kind === "addon" && c.on.includes(x.id)).sort((a, b) => a.sort - b.sort)) {
         if (e.pick_group) { if (groups.has(e.pick_group)) continue; groups.add(e.pick_group); }
@@ -106,7 +116,7 @@ export function price(cat: Catalogue, c: Choices, codePct = 0): Price {
     cost += sub * 0.25;
   }
   const floor = num(S.margin_floor, 0.4);
-  // partner discounts never apply to crew roles: their rates already sit at the margin floor
+  // partner discounts never apply to crew or talent: crew rates sit at the margin floor, talent at their own rate plus our markup
   const dsub = sub - crewSub, dcost = cost - crewCost;
   const maxOff = Math.max(0, dsub - dcost / (1 - floor));
   const disc = codePct > 0 ? Math.min(dsub * codePct / 100, maxOff) : 0;
