@@ -14,7 +14,7 @@ export const KITS: Record<string, KitInfo> = {
       ["1", "Control surface for switching and replays"], ["1", "Flight case with cables"]],
     supply: "A vMix operator, or add ours. Wired internet is best." },
   podk: { best: "Sound and light for a podcast with up to 4 voices, in any room.",
-    inCase: [["4", "Shure MV7+ microphones with desk arms"], ["1", "Mixer that records every voice on its own track"], ["2", "Lights with stands"],
+    inCase: [["4", "Shure MV7+ microphones with desk arms"], ["1", "RODECaster Pro II mixer, records every voice on its own track"], ["2", "Lights with stands"],
       ["1", "Batteries, so no wall power is needed"]],
     supply: "Your cameras, or add our Sony Z200 or OBSBOT Tail 2." },
 };

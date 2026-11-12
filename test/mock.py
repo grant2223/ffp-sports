@@ -49,6 +49,12 @@ for _pk in F['packages']:
 F['roles'].append(dict(id='national-commentator', group_id='talent', name='Commentator, national level', client_day=8500, cost_day=5000, sort=29, active=True))
 F['role_rates'].append(dict(id='national-commentator', group_id='talent', name='Commentator, national level', client_day=8500, sort=29, active=True))
 F['service_roles'].append(dict(service_id='live', role_id='national-commentator', sort=29))
+
+# mirror migration 0007
+import json as _json
+for _k, _v in _json.load(open('/home/claude/ffp-sports/test/details.json')).items():
+    if _k in _X: _X[_k]['details'] = _v
+_X['pod-e2']['name'] = 'Multi-camera episode edit'
 sent = []
 
 def handle(route, req):

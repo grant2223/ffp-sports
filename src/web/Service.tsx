@@ -5,10 +5,24 @@ import C from "./content.json";
 import { PACKS, POD_EXTRAS, LIVE_EXTRAS, VIDEO_EXTRAS } from "./packages";
 import { Deliverable } from "./Deliverable";
 import { CrewAddons } from "./Crew";
+import { useCatalogue } from "../lib/catalogue";
+import type { Extra as SiteExtra } from "./packages";
 
 const BOOK: Record<string, string> = { live: "/book?s=live", video: "/book?s=video", photo: "/book?s=photo", pod: "/book?s=pod" };
 
+// Add-on text and prices come from the live catalogue, so the site and the booking always match.
+function useLiveExtra() {
+  const { cat } = useCatalogue();
+  return (it: SiteExtra): SiteExtra => {
+    const e = it.id ? cat?.extras.find((x) => x.id === it.id) : undefined;
+    if (!e) return it;
+    const v = e.per_crew_hour ? Number(cat!.settings.extra_hour_client || 750) : e.price_2h;
+    return { ...it, name: e.name, d: e.strap, price: "AED " + Number(v).toLocaleString("en") + (e.per_crew_hour ? " an hour each" : ""), details: e.details ?? [] };
+  };
+}
+
 export function Service({ id }: { id: string }) {
+  const live = useLiveExtra();
   const s = C.services.find((x) => x.id === id)!;
   const book = BOOK[id];
   return (
@@ -43,7 +57,8 @@ export function Service({ id }: { id: string }) {
         <div className={"ax-grid n" + (id === "live" ? LIVE_EXTRAS : id === "video" ? VIDEO_EXTRAS : POD_EXTRAS).length}>{(id === "live" ? LIVE_EXTRAS : id === "video" ? VIDEO_EXTRAS : POD_EXTRAS).map((g) => (
           <div key={g.name} className="ax">
             <div className="ax-ph"><img src={g.img} alt="" loading="lazy" style={g.pos ? { objectPosition: g.pos } : undefined} /><h3>{g.name}</h3></div>
-            <ul>{g.items.map((it) => <li key={it.name}><span><b>{it.name}</b><small>{it.d}</small></span><em>{it.price}</em></li>)}</ul>
+            <ul>{g.items.map(live).filter((it) => it.price).map((it) => <li key={it.name}><span><b>{it.name}</b><small>{it.d}</small>
+              {(it.details ?? []).length > 0 && <details className="ax-d"><summary>What you get</summary><ul>{it.details!.map((d) => <li key={d}>{d}</li>)}</ul></details>}</span><em>{it.price}</em></li>)}</ul>
           </div>))}
         </div>
         <CrewAddons svc={id} />

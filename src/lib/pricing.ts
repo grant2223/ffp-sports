@@ -3,7 +3,7 @@
 
 export interface Service { id: string; name: string; strap: string; img: string; gearable: boolean; season: boolean; editing: boolean; sort: number; active: boolean }
 export interface Pkg { id: string; service_id: string; name: string; strap: string; img: string; crew: number; price_2h: number; price_day: number; cost_2h: number; cost_day: number; items: { t: string; d: string }[]; sort: number; active: boolean }
-export interface Extra { id: string; service_id: string; kind: "addon" | "edit_level" | "edit_extra"; name: string; strap: string; img: string; price_2h: number; price_day: number; cost_2h: number; cost_day: number; per_crew_hour: boolean; adds_crew: number; pick_group: string | null; sort: number; active: boolean }
+export interface Extra { id: string; service_id: string; kind: "addon" | "edit_level" | "edit_extra"; name: string; strap: string; img: string; price_2h: number; price_day: number; cost_2h: number; cost_day: number; per_crew_hour: boolean; adds_crew: number; pick_group: string | null; sort: number; active: boolean; details?: string[] }
 export interface Gear { id: string; kind: "kit" | "item"; name: string; strap: string; detail: string; img: string; price_day: number; units: number; deposit: number; sort: number; active: boolean }
 export interface Zone { id: string; name: string; travel_per_crew: number; delivery: number; sort: number }
 export interface Role { id: string; group_id: string; name: string; client_day: number; cost_day?: number; sort: number; active: boolean }

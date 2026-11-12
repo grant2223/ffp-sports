@@ -213,14 +213,16 @@ function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSen
                   <div className="qos cv" role="radiogroup" aria-label="Editing">{edits.map((e) => (
                     <button key={e.id} className={"qo qv" + (editId === e.id ? " on" : "")} type="button" role="radio" aria-checked={editId === e.id} onClick={() => put({ edit: e.id })}>
                       <img src={e.img} alt="" /><span className="qt"><b>{e.name}</b><small>{e.strap}</small></span><em>{e.price_2h ? aed(e.price_2h) : "Included"}</em></button>))}
-                  </div></div>
+                  </div>
+                  {editObj && (editObj.details ?? []).length > 0 && <div className="edd"><p><b>{editObj.name}</b>: what you get</p><ul>{editObj.details!.map((d) => <li key={d}>{d}</li>)}</ul></div>}
+                </div>
                 {!!editObj?.price_2h && <div className="blk"><p className="ql">Editing extras</p>
-                  <div className="xr">{eadds.map((a) => <AddRow key={a.id} name={a.name} strap={a.strap} price={a.price_2h} on={st.eon.includes(a.id)} toggle={() => put({ eon: toggle(st.eon, a.id) })} />)}</div>
+                  <div className="xr">{eadds.map((a) => <AddRow key={a.id} name={a.name} strap={a.strap} price={a.price_2h} details={a.details} on={st.eon.includes(a.id)} toggle={() => put({ eon: toggle(st.eon, a.id) })} />)}</div>
                 </div>}
               </>}
               <div className="blk">{hasEdits && <p className="ql">On the day</p>}
                 <div className="xr">
-                  {crew && adds.map((a) => <AddRow key={a.id} name={a.name} strap={a.strap} price={addPrice(a)} suffix={st.dur === "season" ? " a match" : ""} on={st.on.includes(a.id)} toggle={() => toggleAdd(a.id)} />)}
+                  {crew && adds.map((a) => <AddRow key={a.id} name={a.name} strap={a.strap} price={addPrice(a)} details={a.details} suffix={st.dur === "season" ? " a match" : ""} on={st.on.includes(a.id)} toggle={() => toggleAdd(a.id)} />)}
                   {gear && <AddRow name="Set-up and handover" strap="An FFP operator sets everything up at your venue and shows your team how to run it." price={Number(cat.settings.setup_handover || 1000)} on={st.setup} toggle={() => put({ setup: !st.setup })} />}
                 </div></div>
               {crew && crewRoles.length > 0 && <div className="blk crw"><p className="ql">Extra crew<span className="cnote">{st.dur === "day" ? "Day rates" : st.dur === "season" ? "Per match" : "Up to 2 hours"}</span></p>
@@ -341,9 +343,12 @@ function Stepper({ q, dec, inc }: { q: number; dec: () => void; inc: () => void 
   return <div className="stepper"><button type="button" aria-label="Fewer" onClick={dec}>−</button><b>{q}</b><button type="button" aria-label="More" onClick={inc}>+</button></div>;
 }
 
-function AddRow({ name, strap, price, suffix = "", on, toggle }: { name: string; strap: string; price: number; suffix?: string; on: boolean; toggle: () => void }) {
-  return <button className="xi" type="button" role="checkbox" aria-checked={on} onClick={toggle}>
-    <span className="qt"><span className="xh"><b>{name}</b><i className="xp">+ {aed(price)}{suffix}</i></span><small>{strap}</small></span><span className={"sw" + (on ? " on" : "")}></span></button>;
+function AddRow({ name, strap, price, suffix = "", on, toggle, details = [] }: { name: string; strap: string; price: number; suffix?: string; on: boolean; toggle: () => void; details?: string[] }) {
+  return <div className="xw">
+    <button className="xi" type="button" role="checkbox" aria-checked={on} onClick={toggle}>
+      <span className="qt"><span className="xh"><b>{name}</b><i className="xp">+ {aed(price)}{suffix}</i></span><small>{strap}</small></span><span className={"sw" + (on ? " on" : "")}></span></button>
+    {details.length > 0 && <details className="xd"><summary>What you get</summary><ul>{details.map((d) => <li key={d}>{d}</li>)}</ul></details>}
+  </div>;
 }
 
 function Sent({ refNo, onAgain }: { refNo: string; onAgain: () => void }) {

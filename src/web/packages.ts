@@ -74,44 +74,47 @@ export const PACKS: Record<string, Pack[]> = {
   ],
 };
 // Podcast extras, grouped. Prices match the booking engine (gear day rates, crew rates, editing prices).
-export type Extra = { name: string; d: string; price: string };
+export type Extra = { id?: string; name: string; d: string; price: string; details?: string[] };
 export type ExtraGroup = { name: string; img: string; pos?: string; items: Extra[] };
 export const LIVE_EXTRAS: ExtraGroup[] = [
   { name: "Better equipment", img: "/img/stadiumcam.jpg", items: [
-    { name: "vMix production system", d: "Replays, full graphics and more camera inputs", price: "AED 1,950" },
-    { name: "Broadcast camera upgrade", d: "Sony Z200 with 20x zoom in place of a wireless camera", price: "AED 750" },
-    { name: "Extra wireless camera", d: "OBSBOT Tail 2 that tracks play on its own", price: "AED 350" }] },
+    { id: "live-a6", name: "vMix production system", d: "Replays, full graphics and more camera inputs", price: "AED 1,950" },
+    { id: "live-a7", name: "Broadcast camera upgrade", d: "Sony Z200 with 20x zoom in place of a wireless camera", price: "AED 750" },
+    { id: "live-a8", name: "Extra wireless camera", d: "OBSBOT Tail 2 that tracks play on its own", price: "AED 350" }] },
   { name: "Back-ups", img: "/img/gymcam.jpg", items: [
-    { name: "Backup internet", d: "A second 4G connection on a different network", price: "AED 300" },
-    { name: "Backup power", d: "Battery that keeps the stream running if power drops", price: "AED 250" },
-    { name: "Backup recording", d: "Every camera recorded separately on site", price: "AED 400" }] },
+    { id: "live-a9", name: "Backup internet", d: "A second 4G connection on a different network", price: "AED 300" },
+    { id: "live-a10", name: "Backup power", d: "Battery that keeps the stream running if power drops", price: "AED 250" },
+    { id: "live-a11", name: "Backup recording", d: "Every camera recorded separately on site", price: "AED 400" }] },
   { name: "Content", img: "/img/fans.jpg", items: [
-    { name: "Highlights reel", d: "60 to 90 seconds for Instagram and TikTok, in 48 hours", price: "AED 600" }] },
+    { id: "live-a4", name: "Highlights reel", d: "60 to 90 seconds for Instagram and TikTok, in 48 hours", price: "AED 600" }] },
 ];
 export const VIDEO_EXTRAS: ExtraGroup[] = [
   { name: "Filming", img: "/img/stadiumcam.jpg", items: [
-    { name: "Second videographer", d: "Two angles on every moment", price: "AED 2,500" },
-    { name: "Extra hour", d: "More filming time, per crew member", price: "AED 750" }] },
+    { id: "video-a1", name: "Second videographer", d: "Two angles on every moment", price: "AED 2,500" },
+    { id: "video-a2", name: "Extra hour", d: "More filming time, per crew member", price: "AED 750" }] },
   { name: "Editing", img: "/img/desk.jpg", items: [
-    { name: "Full event film", d: "8 to 12 minutes on the whole day, added to your highlights film. 7 days", price: "AED 2,000" },
-    { name: "Branded opener", d: "Your logo and title animated at the start", price: "AED 400" },
-    { name: "Sponsor edits", d: "Sponsor ads or logo stings cut in", price: "AED 400" },
-    { name: "Subtitles", d: "Captions burned in, plays on mute", price: "AED 300" },
-    { name: "Extra round of changes", d: "One more round after your review", price: "AED 250" },
-    { name: "Next-day delivery", d: "First edit the day after filming", price: "AED 500" }] },
+    { name: "Full event film", d: "Added to your highlights film", price: "AED 2,000", details: ["One film of 8 to 12 minutes covering the whole day, 16:9", "Key moments, speeches, results and atmosphere, with music", "Colour corrected and sound levelled", "Delivered with your highlights film in 7 working days", "1 round of changes"] },
+    { id: "video-x0", name: "Branded opener", d: "Your logo and title animated at the start", price: "AED 400" },
+    { id: "video-x2", name: "Sponsor edits", d: "Sponsor ads or logo stings cut in", price: "AED 400" },
+    { id: "video-x4", name: "Subtitles", d: "Captions burned in, plays on mute", price: "AED 300" },
+    { id: "video-x6", name: "Extra round of changes", d: "One more round after your review", price: "AED 250" },
+    { id: "video-x7", name: "Next-day delivery", d: "First edit the day after filming", price: "AED 500" }] },
 ];
 export const POD_EXTRAS: ExtraGroup[] = [
   { name: "Extra gear", img: "/img/pod.jpg", items: [
-    { name: "4th camera", d: "OBSBOT Tail 2 that follows whoever is speaking", price: "AED 350" },
-    { name: "Wireless mics", d: "DJI Mic 3 set for a guest who moves around", price: "AED 200" }] },
+    { id: "pod-a2", name: "4th camera", d: "OBSBOT Tail 2 that follows whoever is speaking", price: "AED 350" },
+    { id: "pod-a3", name: "Wireless mics", d: "DJI Mic 3 set for a guest who moves around", price: "AED 200" }] },
   { name: "Editing and publishing", img: "/img/desk.jpg", items: [
-    { name: "Audio edit", d: "Up to 60 minutes. Mistakes cut, noise removed, loudness set for Spotify and Apple. 3 working days", price: "AED 750" },
-    { name: "Full episode edit", d: "Up to 60 minutes. Cut between every camera, colour, the audio edit, names on screen. 5 working days", price: "AED 1,500" },
-    { name: "Social clips", d: "5 vertical clips of 30 to 60 seconds, captioned", price: "AED 500" },
-    { name: "Intro and outro", d: "Your show opener and sign-off", price: "AED 400" },
-    { name: "Subtitles", d: "Captions burned into the video", price: "AED 300" },
-    { name: "Thumbnail", d: "Designed for YouTube and Spotify", price: "AED 200" },
-    { name: "We publish it", d: "Uploaded to Spotify, Apple Podcasts and YouTube", price: "AED 300" }] },
+    { id: "pod-e1", name: "Audio edit", d: "Up to 60 minutes. Mistakes cut, noise removed, loudness set for Spotify and Apple. 3 working days", price: "AED 750" },
+    { id: "pod-e2", name: "Full episode edit", d: "Up to 60 minutes. Cut between every camera, colour, the audio edit, names on screen. 5 working days", price: "AED 1,500" },
+    { id: "pod-x2", name: "Social clips", d: "5 vertical clips of 30 to 60 seconds, captioned", price: "AED 500" },
+    { id: "pod-x0", name: "Intro and outro", d: "Your show opener and sign-off", price: "AED 400" },
+    { id: "pod-x3", name: "Subtitles", d: "Captions burned into the video", price: "AED 300" },
+    { id: "pod-x4", name: "Thumbnail", d: "Designed for YouTube and Spotify", price: "AED 200" },
+    { id: "pod-x6", name: "We publish it", d: "Uploaded to Spotify, Apple Podcasts and YouTube", price: "AED 300" },
+    { id: "pod-x1", name: "Sponsor ad reads", d: "", price: "" },
+    { id: "pod-x5", name: "Show notes and timestamps", d: "", price: "" },
+    { id: "pod-x7", name: "Next-day delivery", d: "", price: "" }] },
 ];
 
 // The booking choices each package opens with. Totals come from the same pricing engine as the booking.

@@ -15,3 +15,12 @@
 .pg-book .crw-add{display:block;width:100%;box-sizing:border-box;height:48px;padding:0 16px;border:0;border-radius:8px;background:#F2F2F2;font-family:inherit;font-size:16px;color:#0f1720;margin-bottom:6px}
 .pg-book .crw-add:focus{outline:3px solid #F5C800}
 .pg-book .cnote2{margin:6px 0 4px;padding:10px 14px;border-radius:6px;background:#FFF8D1;font-size:13.5px;color:#3a2f00}
+.pg-book .xw{display:flex;flex-direction:column}
+.pg-book .xd{margin:-2px 0 6px}
+.pg-book .xd summary{cursor:pointer;font-size:13.5px;font-weight:600;color:#7a5f00;list-style:none;padding:4px 0}
+.pg-book .xd summary::-webkit-details-marker{display:none}
+.pg-book .xd summary::after{content:" +"}
+.pg-book .xd[open] summary::after{content:" −"}
+.pg-book .xd ul,.pg-book .edd ul{margin:4px 0 6px;padding-left:18px;font-size:14px;line-height:1.55;color:#2b3340}
+.pg-book .edd{margin-top:14px;padding:16px 20px;background:#F6F6F4;border-radius:8px;border-left:4px solid #F5C800}
+.pg-book .edd p{font-size:15px;margin:0 0 4px}

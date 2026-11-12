@@ -371,3 +371,9 @@
 .fs-packs.n4 .gets>div{grid-template-columns:64px 1fr}.fs-packs.n4 .gets dt{font-size:15px}.fs-packs.n4 .gets dd{font-size:13.5px}
 @media (max-width:1100px){.fs-packs.n4{grid-template-columns:1fr 1fr}}
 @media (max-width:700px){.fs-packs.n4{grid-template-columns:1fr}}
+.ax-d{margin-top:6px}
+.ax-d summary{cursor:pointer;list-style:none;font-size:13.5px;font-weight:600;color:#7a5f00}
+.ax-d summary::-webkit-details-marker{display:none}
+.ax-d summary::after{content:" +"}.ax-d[open] summary::after{content:" −"}
+.ax li .ax-d ul{list-style:disc;margin:6px 0 0;padding-left:18px}
+.ax li .ax-d li{display:list-item;padding:2px 0;border:0;font-size:13.5px;line-height:1.5;color:var(--ink)}
