@@ -28,12 +28,12 @@ update gear set strap = '3 auto-tracking 4K cameras, YoloBox Extreme, commentary
     '2 × Audio-Technica BPHS1 broadcast headsets: closed-back headphones, boom mic',
     'NP-F970 batteries for the wireless sets, cables, power and carry cases'] where id = 'kit3';
 
-update gear set strap = 'i9 vMix PC, 4 SDI camera inputs, 2 monitors, control surface',
+update gear set strap = 'i9 vMix PC, 8 SDI connections, 2 monitors, control surface',
   best = 'Larger events: several cameras, instant replays and full graphics.',
   supply = 'Your cameras, or add ours. A vMix operator, or add ours. Wired internet.',
   specs = array[
     '1 × Production PC: Intel Core i9, 64 GB RAM, latest licensed vMix for switching, instant replay, graphics, recording and streaming',
-    '1 × Blackmagic DeckLink capture card: 4 SDI connections, each set as a camera input or an output',
+    '2 × Blackmagic DeckLink capture cards: 8 SDI connections in total, each set as a camera input or an output',
     '2 × Monitors: one for the program, one for the multiview',
     '1 × Control surface for switching and replays',
     'Flight case with power and video cables'] where id = 'vmix';
@@ -112,5 +112,16 @@ update gear set strap = 'SmallRig AD-01: fluid head, up to 186 cm, holds 8 kg', 
     'Holds up to 8 kg, enough for the Sony Z200 with mic and battery',
     'Quick-release plate, 75 mm bowl and bubble level',
     'Carry bag'] where id = 'tripod';
+
+insert into gear (id, kind, name, strap, detail, img, price_day, units, deposit, purchase_price, sort, active, specs)
+values ('pyros', 'item', 'Hollyland Pyro S wireless video set', 'Sends a camera to the switcher without a cable, up to 400 m', '', '', 150, 6, 0, 1600, 18, true, array[
+    '1 transmitter and 1 receiver, with antennas',
+    'Transmitter takes HDMI or SDI from the camera; receiver gives HDMI and SDI to the switcher',
+    '4K 30 fps over HDMI, 1080p 60 fps over SDI',
+    'Up to 400 m line of sight, 50 ms delay',
+    'One transmitter can feed up to 4 receivers (up to 200 m)',
+    '1 NP-F970 battery per unit, plus a mains adapter'])
+on conflict (id) do nothing;
+insert into gear_parts (kit_id, item_id, qty) values ('kit3', 'pyros', 3) on conflict do nothing;
 
 update gear set detail = array_to_string(specs, '. ') where kind = 'kit';

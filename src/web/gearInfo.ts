@@ -26,6 +26,8 @@ export const CATS: Cat[] = [
   { id: "stream", name: "Streaming and switching", icon: "live", items: [
     { id: "yolou", spec: "8-inch touchscreen. Switches cameras, adds scores and logos, streams and records. SIM slot for 4G." },
     { id: "yoloe", spec: "For multi-camera shows. Switches several cameras, adds graphics, streams and records." }] },
+  { id: "wireless", name: "Wireless video", icon: "live", items: [
+    { id: "pyros", spec: "Sends a camera to the switcher without a cable, up to 400 m." }] },
   { id: "audio", name: "Audio and commentary", icon: "mic", items: [
     { id: "djimic", spec: "2 clip-on transmitters and a receiver. Each transmitter records a backup." },
     { id: "rode", spec: "4 microphone inputs, a track per voice, records to SD card." },
