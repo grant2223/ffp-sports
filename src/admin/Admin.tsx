@@ -4,13 +4,14 @@ import { sb } from "../lib/supabase";
 import { ToastProvider } from "./kit";
 import { Bookings } from "./Bookings";
 import { Quotes } from "./Quotes";
+import { Invoices } from "./Invoices";
 import { GearTab } from "./Gear";
 import { Crew } from "./Crew";
 import { Prices } from "./Prices";
 import { SettingsTab } from "./Settings";
 import "./admin.css";
 
-const TABS = [["bookings", "Bookings"], ["quotes", "Quotes"], ["gear", "Gear"], ["crew", "Crew and roles"], ["prices", "Prices"], ["settings", "Settings"]] as const;
+const TABS = [["bookings", "Bookings"], ["quotes", "Quotes"], ["invoices", "Invoices"], ["gear", "Gear"], ["crew", "Crew and roles"], ["prices", "Prices"], ["settings", "Settings"]] as const;
 type Tab = (typeof TABS)[number][0];
 
 export default function Admin() {
@@ -51,6 +52,7 @@ export default function Admin() {
         </div></div>
         {tab === "bookings" && <Bookings onChange={recount} />}
         {tab === "quotes" && <Quotes />}
+        {tab === "invoices" && <Invoices />}
         {tab === "gear" && <GearTab />}
         {tab === "crew" && <Crew />}
         {tab === "prices" && <Prices />}

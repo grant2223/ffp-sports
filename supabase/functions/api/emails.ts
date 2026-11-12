@@ -95,3 +95,19 @@ ${q.subject ? `<p style="margin:12px 0 0"><b>Subject</b> ${esc(q.subject)}</p>` 
 <div style="font-size:12px;color:#5b6270;line-height:1.6">${((q.terms ?? []) as string[]).map((t) => esc(t)).join("<br>")}<br>Payment in advance by bank transfer. Prices in AED.</div>
 ${bank(S, q.number)}`;
 }
+
+export function invoiceEmail(v: Record<string, any>, S: Record<string, string>) {
+  const lines = (v.lines ?? []) as { desc: string; qty: number; days?: number; unit: number }[];
+  const due = Number(v.total) - Number(v.paid || 0);
+  const rows = lines.map((l, i) => `<tr><td style="padding:8px 6px;border-bottom:1px solid #eeeeee;color:#5b6270">${i + 1}</td><td style="padding:8px 6px;border-bottom:1px solid #eeeeee">${esc(l.desc)}</td><td style="padding:8px 6px;border-bottom:1px solid #eeeeee;text-align:right">${l.qty}</td><td style="padding:8px 6px;border-bottom:1px solid #eeeeee;text-align:right;white-space:nowrap">${aed(l.qty * (l.days || 1) * l.unit)}</td></tr>`).join("");
+  return `<h1 style="margin:0 0 4px;font-size:22px;letter-spacing:.08em">INVOICE</h1>
+<p style="margin:0;color:#5b6270">${esc(v.number)}, due ${fd(v.due_date)}${v.quote_number ? `, for quotation ${esc(v.quote_number)}` : ""}</p>
+<p style="margin:16px 0 0"><b>Bill to</b> ${esc(v.org)}<br><b>Attention</b> ${esc(v.attention)}</p>
+${v.subject ? `<p style="margin:12px 0 0"><b>Subject</b> ${esc(v.subject)}</p>` : ""}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;font-size:14px"><tr style="background:#0A0A0A;color:#fff"><td style="padding:8px 6px">#</td><td style="padding:8px 6px">Description</td><td style="padding:8px 6px;text-align:right">Qty</td><td style="padding:8px 6px;text-align:right">Amount</td></tr>${rows}
+${Number(v.paid) ? `<tr><td></td><td style="padding:10px 6px 0">Paid</td><td></td><td style="padding:10px 6px 0;text-align:right">−${aed(Number(v.paid))}</td></tr>` : ""}
+<tr><td></td><td style="padding:12px 6px 0;font-weight:700">Amount due</td><td></td><td style="padding:12px 6px 0;text-align:right;font-weight:800;font-size:18px">${aed(due)}</td></tr></table>
+<p style="margin:0"><b>Please pay ${aed(due)} by ${fd(v.due_date)}, by bank transfer, using ${esc(v.number)} as the reference.</b></p>
+${bank(S, v.number)}
+<div style="font-size:12px;color:#5b6270;line-height:1.6">${((v.terms ?? []) as string[]).filter((t) => t.trim()).map((t) => esc(t)).join("<br>")}${(v.terms ?? []).length ? "<br>" : ""}Prices in AED.</div>`;
+}

@@ -12,7 +12,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
 export const money = (n: number | string | null | undefined) => "AED " + Math.round(Number(n || 0)).toLocaleString("en-US");
 export const day = (d?: string | null) => (d ? new Date(d.length === 10 ? d + "T00:00" : d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "");
-export const Status = ({ s }: { s: string }) => <span className={"st " + s}>{({ requested: "New request", confirmed: "Awaiting payment", part_paid: "Part paid", paid: "Paid", completed: "Completed", cancelled: "Cancelled", declined: "Declined", draft: "Draft", sent: "Sent", accepted: "Accepted" } as Record<string, string>)[s] || s}</span>;
+export const Status = ({ s }: { s: string }) => <span className={"st " + s}>{({ requested: "New request", confirmed: "Awaiting payment", part_paid: "Part paid", paid: "Paid", completed: "Completed", cancelled: "Cancelled", declined: "Declined", draft: "Draft", sent: "Sent", accepted: "Accepted", void: "Void" } as Record<string, string>)[s] || s}</span>;
 
 export function Full({ title, onClose, actions, children }: { title: ReactNode; onClose: () => void; actions?: ReactNode; children: ReactNode }) {
   return (

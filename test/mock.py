@@ -60,6 +60,12 @@ _X['pod-e2']['name'] = 'Multi-camera episode edit'
 F['service_roles'] = [r for r in F['service_roles'] if r['role_id'] not in ('commentator', 'co-commentator-or-analyst', 'presenter-or-host', 'mc', 'reporter-or-sideline-interviewer', 'stadium-announcer', 'hype-host-or-dj', 'national-commentator')]
 F['talent_rates'] = [dict(staff_id='t1', first_name='Test', last_name='Talent', photo_url='/img/grant.jpg', role_id='commentator', role_name='Commentator', client_day=2300)]
 F['gear_parts'] = []
+
+F['invoices'] = [dict(id='i1', number='FFPS-INV-0001', status='draft', quote_id=None, booking_id=None, quote_number='FFPS-Q-0143', org='Augustus Media', attention='Kirby', email='kirby@augustusmedia.com',
+  subject='Camera rental, 8 Sony PXW-Z200 kits', issue_date='2026-11-12', due_date='2026-11-12', total=7100, paid=0, created_at=NOW, sent_at=None, paid_at=None,
+  lines=[dict(desc='Sony PXW-Z200 4K camcorder', note='20x optical zoom, 2 batteries, charger, carry bag', qty=8, days=1, unit=750, cost=0), dict(desc='Video tripod with fluid head', note='Matched to the Z200', qty=8, days=1, unit=100, cost=0),
+         dict(desc='Drop-off, Dubai', note='Fri 13 Nov 2026, 9:00 am', qty=1, days=1, unit=150, cost=0), dict(desc='Pick-up, Dubai', note='End of hire', qty=1, days=1, unit=150, cost=0)],
+  terms=['Hire: 1 day, from Fri 13 Nov 2026.', 'Location: Dubai, drop-off and pick-up.'])]
 sent = []
 
 def handle(route, req):

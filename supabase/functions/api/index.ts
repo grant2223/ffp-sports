@@ -1,7 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { aed, type Catalogue, type Choices, isGear, price, rentalDays, talentKey } from "./pricing.ts";
-import { bookingReceived, adminAlert, confirmation, paymentReceipt, declined, quoteEmail, estimateReceived, wrap } from "./emails.ts";
+import { bookingReceived, adminAlert, confirmation, paymentReceipt, declined, quoteEmail, invoiceEmail, estimateReceived, wrap } from "./emails.ts";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -34,7 +34,7 @@ async function catalogue(): Promise<Catalogue> {
   return { services: s.data ?? [], packages: p.data ?? [], extras: e.data ?? [], gear: g.data ?? [], zones: z.data ?? [], settings, roles: ro.data ?? [], roleGroups: rg.data ?? [], serviceRoles: sr.data ?? [], talent } as Catalogue;
 }
 
-async function send(to: string[], subject: string, html: string, kind: string, ids: { booking_id?: string; quote_id?: string }, from: string) {
+async function send(to: string[], subject: string, html: string, kind: string, ids: { booking_id?: string; quote_id?: string; invoice_id?: string }, from: string) {
   const key = Deno.env.get("RESEND_API_KEY");
   for (const t of to.filter(Boolean)) {
     let okk = false, error: string | null = null;
@@ -216,6 +216,15 @@ Deno.serve(async (req) => {
         await send([q.email], `Quotation ${q.number}${q.subject ? ": " + q.subject : ""}`, W(quoteEmail(q, S)), "quote", { quote_id: q.id }, from);
         await db.from("quotes").update({ status: "sent", sent_at: new Date().toISOString() }).eq("id", q.id);
         return ok({ status: "sent" });
+      }
+      case "send_invoice": {
+        const { data: v } = await db.from("invoices").select("*").eq("id", body.id).single();
+        if (!v) return fail("Invoice not found");
+        if (v.status === "void") return fail("This invoice is void");
+        if (!v.email) return fail("Add the client's email");
+        await send([v.email], `Invoice ${v.number}${v.subject ? ": " + v.subject : ""}`, W(invoiceEmail(v, S)), "invoice", { invoice_id: v.id }, from);
+        if (v.status === "draft") await db.from("invoices").update({ status: "sent", sent_at: new Date().toISOString() }).eq("id", v.id);
+        return ok({ status: v.status === "draft" ? "sent" : v.status });
       }
       case "id_doc_url": {
         const { data: b } = await db.from("bookings").select("id_doc_path").eq("id", body.id).single();

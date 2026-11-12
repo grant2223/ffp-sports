@@ -6,10 +6,10 @@ import { Full, money, day, Status, useToast } from "./kit";
 import "./quote.css";
 
 type Row = Record<string, any>;
-interface QLine { desc: string; note?: string; qty: number; days?: number; unit: number; cost: number }
+export interface QLine { desc: string; note?: string; qty: number; days?: number; unit: number; cost: number }
 const ONES = "Zero One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen".split(" ");
 const TENS = "Zero Ten Twenty Thirty Forty Fifty Sixty Seventy Eighty Ninety".split(" ");
-function words(n: number) {
+export function words(n: number) {
   const w = (x: number): string => {
     if (x < 20) return ONES[x];
     if (x < 100) return TENS[Math.floor(x / 10)] + (x % 10 ? " " + ONES[x % 10] : "");
@@ -19,8 +19,8 @@ function words(n: number) {
   };
   return "UAE Dirhams " + w(Math.round(n)) + " Only";
 }
-const f2 = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const lineTotal = (l: QLine) => l.qty * (l.days || 1) * l.unit;
+export const f2 = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+export const lineTotal = (l: QLine) => l.qty * (l.days || 1) * l.unit;
 
 export function Quotes() {
   const [rows, setRows] = useState<Row[] | null>(null);
@@ -84,6 +84,18 @@ function QuoteEditor({ id, onClose }: { id: string; onClose: () => void }) {
     <Full title={q.number} onClose={close} actions={<span className="noprint" style={{ display: "flex", gap: 8 }}>
       {dirty && <button className="btn gold" type="button" onClick={save}>Save</button>}
       <button className="btn ghost" type="button" onClick={() => window.print()}>Download PDF</button>
+      <button className="btn ghost" type="button" disabled={busy || dirty || !lines.length} onClick={async () => {
+        setBusy(true);
+        const { data: had } = await sb.from("invoices").select("id").eq("quote_id", id).neq("status", "void").maybeSingle();
+        let invId = had?.id;
+        if (!invId) {
+          const { data, error } = await sb.from("invoices").insert({ quote_id: id, booking_id: q.booking_id, quote_number: q.number, org: q.org, attention: q.attention, email: q.email, subject: q.subject,
+            lines, terms: q.terms, total, issue_date: new Date().toISOString().slice(0, 10), due_date: new Date().toISOString().slice(0, 10) }).select("id").single();
+          if (error) { toast(error.message); setBusy(false); return; }
+          invId = data.id; await sb.from("quotes").update({ status: "accepted" }).eq("id", id);
+        }
+        location.href = "/admin?tab=invoices&open=" + invId;
+      }}>Create invoice</button>
       <button className="btn gold" type="button" disabled={busy || dirty || !q.email || !lines.length} onClick={async () => { setBusy(true); try { await api("send_quote", { id }); toast("Quotation emailed to " + q.email); setQ({ ...q, status: "sent" }); } catch (e) { toast((e as Error).message); } finally { setBusy(false); } }}>Email to client</button>
     </span>}>
       <div className="cols" style={{ gridTemplateColumns: "minmax(0,1fr) 820px" }}>
