@@ -27,6 +27,10 @@ function when(b: B) {
   return [fd(b.event_date), esc(b.start_time), esc(b.sport), esc(b.venue)].filter(Boolean).join(", ");
 }
 
+function idNote(b: B) {
+  return b.mode === "gear" ? `<p style="margin:12px 0 0"><b>No deposit.</b> ${b.handover === "delivery" ? "Have your Emirates ID ready when we drop off the gear" : "Bring your Emirates ID when you collect the gear"}. We keep it until the gear is returned, then hand it back. You pay the repair cost of anything damaged, or the replacement cost if it is lost or can't be repaired.</p>` : "";
+}
+
 function bank(S: Record<string, string>, ref: string) {
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:12px 0;font-size:14px;background:#fff8d6;border-radius:6px"><tr><td style="padding:14px 16px;line-height:1.7">
 <b>Account name</b> ${esc(S.public_account_name)}<br><b>Bank</b> ${esc(S.public_bank)}<br><b>Account number</b> ${esc(S.public_account_no)}<br><b>IBAN</b> ${esc(S.public_iban)}<br><b>Reference</b> ${esc(ref)}</td></tr></table>`;
@@ -36,8 +40,8 @@ export function bookingReceived(b: B, _S: Record<string, string>) {
   return `<h1 style="margin:0 0 6px;font-size:22px">We have your request</h1>
 <p style="margin:0;color:#5b6270">Reference <b style="color:#0f1720">${esc(b.ref)}</b></p>
 <p>Hi ${esc(b.first_name)}, thanks for booking ${esc(b.svcName.toLowerCase())} with FFP Sports. Nothing to pay yet.</p>
-<p style="margin:0"><b>${esc(b.svcName)}</b><br>${when(b)}</p>${table(b)}
-<p style="margin:0 0 4px"><b>What happens next</b></p>
+<p style="margin:0"><b>${esc(b.svcName)}</b><br>${when(b)}</p>${table(b)}${idNote(b)}
+<p style="margin:16px 0 4px"><b>What happens next</b></p>
 <ol style="margin:0;padding-left:18px"><li>We check the crew and gear for your date, usually within a few hours and always within 24.</li><li>You get your confirmation with our bank details.</li><li>Pay to lock it in. ${b.pay_plan === "split" ? "Over AED 10,000 you can pay 50% to book and the rest before the work starts." : ""}</li></ol>`;
 }
 
@@ -63,8 +67,8 @@ export function confirmation(b: B, S: Record<string, string>, msg: string) {
 <p>Hi ${esc(b.first_name)}, the crew and gear are available for your date.${msg ? " " + esc(msg) : ""}</p>
 <p style="margin:0"><b>${esc(b.svcName)}</b><br>${when(b)}</p>${table(b)}
 <p style="margin:0"><b>To lock it in, pay ${aed(now)} by bank transfer.</b>${b.pay_plan === "split" ? ` The other ${aed(Number(b.total) / 2)} is due before the work starts.` : ""}</p>
-${bank(S, b.ref)}
-<p style="margin:0;color:#5b6270">Your booking is secured when payment is received. Prices are in AED.</p>`;
+${bank(S, b.ref)}${idNote(b)}
+<p style="margin:12px 0 0;color:#5b6270">Your booking is secured when payment is received. Prices are in AED.</p>`;
 }
 
 export function paymentReceipt(b: B, S: Record<string, string>, amount: number) {
