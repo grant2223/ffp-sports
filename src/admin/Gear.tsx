@@ -27,7 +27,7 @@ export function GearTab() {
       <p className="muted" style={{ marginTop: -6 }}>Rental day rate: about 5% of the purchase price for long-life gear, up to 10% for short-life items. Pays back shows how many rental days cover the purchase.</p>
       <EditTable table="gear" rows={gear} onSaved={load} cols={[
         { k: "name", label: "Name" }, { k: "strap", label: "Short line" }, { k: "units", label: "Units owned", type: "num", w: 110 },
-        { k: "price_day", label: "AED a day", type: "num", w: 120 }, { k: "deposit", label: "Deposit", type: "num", w: 110 }, { k: "purchase_price", label: "Purchase price", type: "num", w: 140 },
+        { k: "price_day", label: "AED a day", type: "num", w: 120 }, { k: "purchase_price", label: "Purchase price", type: "num", w: 140 },
         { k: "active", label: "Listed", type: "bool", w: 90 }]} extra={(g) => <span className="muted sm" style={{ marginRight: 8 }}>{pb(g)}</span>} />
     </div>
   );

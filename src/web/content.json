@@ -678,11 +678,11 @@
   },
   {
    "q": "Is there a deposit?",
-   "a": "Yes, AED 2,000 per kit or AED 500 per camera or similar item, paid with the rental and refunded when the gear comes back undamaged. Tripods and headsets need no deposit."
+   "a": "No. You leave your Emirates ID with us when you collect the gear or when we deliver it, and we hand it back when the gear is returned."
   },
   {
    "q": "What do I need to rent?",
-   "a": "Your Emirates ID or passport, uploaded when you book."
+   "a": "Your Emirates ID, which you leave with us at pick-up or delivery. You also agree to pay for anything lost or damaged while the gear is with you."
   },
   {
    "q": "Can someone show us how it works?",
@@ -698,7 +698,7 @@
   },
   {
    "q": "What if something breaks?",
-   "a": "Tell us straight away. Repairs come out of the deposit, up to the repair cost."
+   "a": "Tell us straight away. You pay the repair cost, or the replacement cost if it is lost or can't be repaired. We send you the repair quote or receipt."
   },
   {
    "q": "Can I extend my rental?",

@@ -29,12 +29,10 @@ function initial(): State {
 }
 
 const fd = (v: string) => (v ? new Date(v + "T00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" }) : "");
-const toB64 = (f: File) => new Promise<string>((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(",")[1] || ""); r.onerror = rej; r.readAsDataURL(f); });
 
 export function Book() {
   const { cat, error } = useCatalogue();
   const [st, setSt] = useState<State>(initial);
-  const [idFile, setIdFile] = useState<File | null>(null);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState<{ ref: string } | null>(null);
   const [err, setErr] = useState("");
@@ -54,12 +52,11 @@ export function Book() {
 
   if (sent) return <Sent refNo={sent.ref} onAgain={() => { localStorage.removeItem(KEY); setSt(blank); setSent(null); }} />;
   if (!cat) return <Shell><div className="bf"><h1>Book with FFP Sports</h1><p className="shs" style={{ marginTop: 16 }}>{error || "Loading prices…"}</p></div></Shell>;
-  return <Flow cat={cat} st={st} put={put} gear={gear} free={free} idFile={idFile} setIdFile={setIdFile} sending={sending} err={err}
+  return <Flow cat={cat} st={st} put={put} gear={gear} free={free} sending={sending} err={err}
     onSend={async () => {
       setErr(""); setSending(true);
       try {
-        const id_doc = gear && idFile ? { name: idFile.name, type: idFile.type, data: await toB64(idFile) } : undefined;
-        const r = await api<{ ref: string }>("create_booking", { choices: pickChoices(st), details: st.d, code: st.pct ? st.code : "", id_doc });
+        const r = await api<{ ref: string }>("create_booking", { choices: pickChoices(st), details: st.d, code: st.pct ? st.code : "" });
         localStorage.removeItem(KEY); setSent(r);
       } catch (e) { setErr((e as Error).message); } finally { setSending(false); }
     }} />;
@@ -67,9 +64,9 @@ export function Book() {
 
 const pickChoices = (s: State): Choices => ({ svc: s.svc, mode: s.mode, pk: s.pk, dur: s.dur, on: s.on, edit: s.edit, eon: s.eon, qty: s.qty, crewq: s.crewq ?? {}, talent: s.talent ?? [], from: s.from, to: s.to, hand: s.hand, setup: s.setup, zone: s.zone });
 
-function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSend }: {
+function Flow({ cat, st, put, gear, free, sending, err, onSend }: {
   cat: Catalogue; st: State; put: (p: Partial<State>) => void; gear: boolean; free: Record<string, number> | null;
-  idFile: File | null; setIdFile: (f: File | null) => void; sending: boolean; err: string; onSend: () => void;
+  sending: boolean; err: string; onSend: () => void;
 }) {
   const sv = cat.services.find((s) => s.id === st.svc);
   const crew = !!sv && !gear;
@@ -105,7 +102,7 @@ function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSen
   }
   if (st.step === 5) {
     if (!d.first_name || !d.last_name) need.push("Add your first and last name"); else if (!/.+@.+\..+/.test(d.email)) need.push("Add your email");
-    else if (!d.phone) need.push("Add your mobile"); else if (gear && !idFile) need.push("Upload your ID");
+    else if (!d.phone) need.push("Add your mobile"); 
   }
   if (st.step === 6 && !st.agree) need.push("Tick the agreement to send");
   const ok = need.length === 0 && !sending;
@@ -288,8 +285,6 @@ function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSen
                 <div className="f"><label htmlFor="de">Email</label><input id="de" type="email" autoComplete="email" value={d.email} placeholder="you@club.com" onChange={setD("email")} /></div>
                 <div className="f"><label htmlFor="dp">Mobile</label><input id="dp" type="tel" autoComplete="tel" value={d.phone} placeholder="+971 50 000 0000" onChange={setD("phone")} /></div>
                 <div className="f" style={{ gridColumn: "1 / -1" }}><label htmlFor="do">Club or company</label><input id="do" type="text" value={d.org} onChange={setD("org")} /></div>
-                {gear && <div className="f m1 upl" style={{ gridColumn: "1 / -1" }}><span className="ul">Emirates ID or passport</span><span className="uv">{idFile ? idFile.name : "Photo or PDF, needed to collect the gear"}</span>
-                  <label className="btn ghost" htmlFor="did">Upload</label><input id="did" type="file" accept="image/*,application/pdf" onChange={(e) => setIdFile(e.target.files?.[0] ?? null)} style={{ display: "none" }} /></div>}
               </div>
               <div className="f" style={{ marginTop: 14 }}><label htmlFor="dx">Anything we should know</label><textarea id="dx" rows={3} value={d.notes} placeholder="Teams, schedule, where the stream should go" onChange={setD("notes")} /></div>
               <div style={{ marginTop: 14, display: "flex", gap: 10 }}>
@@ -320,7 +315,8 @@ function Flow({ cat, st, put, gear, free, idFile, setIdFile, sending, err, onSen
               <details className="agr"><summary>Read the booking agreement</summary><ul>
                 <li>Your price is fixed once we confirm your booking. Extra time on the day is charged at the extra hour rate.</li>
                 <li>Payment is in advance by bank transfer. Over AED 10,000, pay 50% to book and the rest before the work starts.</li>
-                <li>Gear rental is paid in full in advance, with a refundable deposit returned when the gear comes back undamaged.</li>
+                <li>Gear rental is paid in full in advance. There is no deposit: you leave your Emirates ID with us at pick-up or delivery, and we hand it back when the gear is returned.</li>
+                <li>You pay the repair cost of anything damaged while the gear is with you, or the replacement cost if it is lost or can't be repaired.</li>
                 <li>Change your date free of charge up to 7 days before.</li>
                 <li>Cancel more than 7 days before: full refund. 2 to 7 days before: 50% refund. Less than 48 hours: no refund.</li>
                 <li>You arrange venue access and a power point near the camera position.</li>

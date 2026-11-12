@@ -84,7 +84,6 @@ Deno.serve(async (req) => {
       if (!phone) return fail("Add your mobile");
       if (gear) {
         if (!isDate(c.from) || !isDate(c.to) || c.to < c.from) return fail("Add your pick-up and return dates");
-        if (!body.id_doc?.data) return fail("Upload your ID");
         if (c.hand === "delivery" && !clean(d.address)) return fail("Add the delivery address");
       } else {
         if (!isDate(clean(d.date, 10))) return fail("Add your date");

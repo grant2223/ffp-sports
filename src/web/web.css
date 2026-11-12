@@ -378,3 +378,6 @@
 .ax li .ax-d ul{list-style:disc;margin:6px 0 0;padding-left:18px}
 .ax li .ax-d li{display:list-item;padding:2px 0;border:0;font-size:13.5px;line-height:1.5;color:var(--ink)}
 .fs .cr-tal{margin-top:16px;font-size:14.5px;color:var(--muted)}.fs .cr-tal a{color:var(--ink);font-weight:700}
+.gi-s{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:5px}
+.gi-s li{position:relative;padding-left:16px;font-size:14px;line-height:1.45;color:var(--ink,#0f1720)}
+.gi-s li::before{content:"";position:absolute;left:0;top:.6em;width:7px;height:2px;background:#F5C800}
