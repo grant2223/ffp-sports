@@ -5,7 +5,6 @@ import { Full, useAsk, useToast } from "./kit";
 type Row = Record<string, any>;
 type Part = { kit_id: string; item_id: string; qty: number; note: string; sort: number };
 const CAT_ORDER = ["Kits", "Cameras", "Streaming and switching", "Wireless video", "Audio and commentary", "Lighting", "Support"];
-const DAYS = 14;
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 const addDays = (d: Date, n: number) => { const x = new Date(d); x.setUTCDate(x.getUTCDate() + n); return x; };
 const today = () => { const n = new Date(); return new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate())); };
@@ -39,6 +38,60 @@ function freeByDay(gear: Row[], parts: Part[], holds: Row[], days: string[]) {
   return out;
 }
 
+const who = (h: Row) => h.bookings.org || `${h.bookings.first_name} ${h.bookings.last_name}`;
+// what takes an item between two dates: its own bookings, kits that contain it, and for a kit, parts that are out elsewhere
+function whoHas(id: string, gear: Row[], parts: Part[], holds: Row[], a: string, b: string, freeIn: Record<string, number[]>): string[] {
+  const byId = Object.fromEntries(gear.map((g) => [g.id, g]));
+  const hit = (h: Row) => h.date_from <= b && h.date_to >= a;
+  const out: string[] = [];
+  for (const h of holds.filter(hit)) {
+    if (h.gear_id === id) out.push(`${h.qty} out, ${who(h)}`);
+    const p = parts.find((x) => x.kit_id === h.gear_id && x.item_id === id);
+    if (p) out.push(`${h.qty * p.qty} out in the ${byId[h.gear_id]?.name}, ${who(h)}`);
+  }
+  // a kit short of units: name only the parts that leave it short
+  const units = byId[id]?.units ?? 0;
+  const short = (pid: string, q: number) => Math.floor(Math.min(...(freeIn[pid] ?? [0])) / q) < units;
+  if (!out.length) for (const p of parts.filter((x) => x.kit_id === id && short(x.item_id, x.qty))) for (const h of holds.filter(hit)) {
+    if (h.gear_id === p.item_id) out.push(`${byId[p.item_id]?.name} is out, ${who(h)}`);
+    else if (h.gear_id !== id && parts.some((x) => x.kit_id === h.gear_id && x.item_id === p.item_id)) out.push(`${byId[p.item_id]?.name} is out in the ${byId[h.gear_id]?.name}, ${who(h)}`);
+  }
+  return [...new Set(out)];
+}
+
+function Calendar({ id, gear, parts, holds, onClose }: { id: string; gear: Row[]; parts: Part[]; holds: Row[]; onClose: () => void }) {
+  const g = gear.find((x) => x.id === id)!;
+  const t = today();
+  const [m, setM] = useState(() => new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), 1)));
+  const n = new Date(Date.UTC(m.getUTCFullYear(), m.getUTCMonth() + 1, 0)).getUTCDate();
+  const days = Array.from({ length: n }, (_, i) => iso(addDays(m, i)));
+  const free = freeByDay(gear, parts, holds, days)[id];
+  const lead = (m.getUTCDay() + 6) % 7;
+  const first = days[0], last = days[n - 1];
+  const kitOf = (h: Row) => parts.find((p) => p.kit_id === h.gear_id && p.item_id === id);
+  const booked = holds.filter((h) => h.date_from <= last && h.date_to >= first && (h.gear_id === id || kitOf(h)));
+  const month = m.toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+  return (
+    <Full title={<>{g.name}<span className="own">{g.units} owned</span></>} onClose={onClose}
+      actions={<div className="mnav"><button className="btn ghost" type="button" aria-label="Previous month" onClick={() => setM(new Date(Date.UTC(m.getUTCFullYear(), m.getUTCMonth() - 1, 1)))}>‹</button><b>{month}</b>
+        <button className="btn ghost" type="button" aria-label="Next month" onClick={() => setM(new Date(Date.UTC(m.getUTCFullYear(), m.getUTCMonth() + 1, 1)))}>›</button></div>}>
+      <div className="calv">
+        <div className="cg">{["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => <div key={d} className="wd">{d}</div>)}
+          {Array.from({ length: lead }, (_, i) => <div key={"l" + i} className="cd out" />)}
+          {days.map((d, i) => { const past = d < iso(t); const f = free[i];
+            return <div key={d} className={"cd" + (past ? " past" : f === 0 ? " none" : f < g.units ? " some" : "") + (d === iso(t) ? " today" : "")}>
+              <span className="dn">{i + 1}</span>{!past && (f === 0 ? <b>None left</b> : f < g.units ? <b>{f} left</b> : null)}</div>; })}
+        </div>
+        <div className="key"><i className="kf" />All free<i className="ks" />Some booked<i className="kn" />None free</div>
+        <h2 className="sh">Booked this month</h2>
+        {!booked.length ? <p className="muted" style={{ margin: 0 }}>Nothing booked.</p> :
+        <div className="bk">{booked.map((h) => { const p = kitOf(h); return <div key={h.id}><b>{short(h.date_from, h.date_to)}</b>
+          <span>{p ? `${h.qty * p.qty} out in the ${gear.find((x) => x.id === h.gear_id)?.name}` : `${h.qty} out`}, {who(h)}</span></div>; })}</div>}
+      </div>
+    </Full>
+  );
+}
+
 export function GearTab() {
   const [gear, setGear] = useState<Row[]>([]);
   const [parts, setParts] = useState<Part[]>([]);
@@ -46,8 +99,9 @@ export function GearTab() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("");
   const [open, setOpen] = useState<string | null>(null);
-  const start = today();
-  const days = useMemo(() => Array.from({ length: DAYS }, (_, i) => iso(addDays(start, i))), [start.getTime()]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [calFor, setCalFor] = useState<string | null>(null);
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
   const load = useCallback(async () => {
     const [g, p, h] = await Promise.all([sb.from("gear").select("*").order("sort"), sb.from("gear_parts").select("*"),
       sb.from("gear_holds").select("*, bookings!inner(ref,status,first_name,last_name,org)").gte("date_to", iso(today())).order("date_from")]);
@@ -55,7 +109,12 @@ export function GearTab() {
     setHolds((h.data ?? []).filter((x: Row) => !["cancelled", "declined"].includes(x.bookings.status)));
   }, []);
   useEffect(() => { load(); }, [load]);
-  const free = useMemo(() => freeByDay(gear, parts, holds, days), [gear, parts, holds, days]);
+  const range = useMemo(() => {
+    if (!from || !to || to < from) return null;
+    const out: string[] = []; for (let d = new Date(from + "T00:00:00Z"); iso(d) <= to && out.length < 366; d = addDays(d, 1)) out.push(iso(d));
+    return out;
+  }, [from, to]);
+  const rangeFree = useMemo(() => (range ? freeByDay(gear, parts, holds, range) : null), [gear, parts, holds, range]);
   const cats = catOrder(gear.map((g) => g.category || "Other"));
   const shown = gear.filter((g) => (!cat || (g.category || "Other") === cat) && (!q || (g.name + " " + g.strap).toLowerCase().includes(q.toLowerCase())));
 
@@ -68,23 +127,31 @@ export function GearTab() {
           <button className="btn gold" type="button" onClick={() => setOpen("new")}>Add item</button>
         </div>
       </div>
+      <div className="dates"><b>Check dates</b>
+        <label className="fld"><span>From</span><input type="date" value={from} onChange={(e) => { setFrom(e.target.value); if (!to || to < e.target.value) setTo(e.target.value); }} /></label>
+        <label className="fld"><span>To</span><input type="date" value={to} min={from || undefined} onChange={(e) => setTo(e.target.value)} /></label>
+        {(from || to) && <button className="btn plain" type="button" onClick={() => { setFrom(""); setTo(""); }}>Clear</button>}
+      </div>
       {!gear.length ? <div className="empty">Loading gear…</div> :
       <div className="tablewrap"><table className="gt">
         <thead><tr><th style={{ width: 96 }}></th><th>Item</th><th className="n" style={{ width: 84 }}>Owned</th>
-          <th className="av"><div className="dh">{days.map((d) => { const x = new Date(d + "T00:00"); return <i key={d}><em>{"SMTWTFS"[x.getDay()]}</em>{x.getDate()}</i>; })}</div></th>
+          {range && <th style={{ width: 400 }}>Free {short(from, to)}</th>}
+          <th style={{ width: 200 }}></th>
           <th className="n" style={{ width: 110 }}>AED a day</th></tr></thead>
         <tbody>{cats.map((c) => { const items = shown.filter((g) => (g.category || "Other") === c); if (!items.length) return null; return [
-          <tr key={"g" + c} className="grp"><td colSpan={5}>{c}<span>{items.length}</span></td></tr>,
+          <tr key={"g" + c} className="grp"><td colSpan={range ? 6 : 5}>{c}<span>{items.length}</span></td></tr>,
           ...items.map((g) => (
             <tr key={g.id} className="click" onClick={() => setOpen(g.id)}>
               <td className="ph">{g.img ? <img src={g.img} alt="" /> : <span className="noph" />}</td>
               <td className="nm"><b>{g.name}</b><span>{g.active ? g.strap : "Hidden from the site"}</span></td>
               <td className="n">{g.units}</td>
-              <td className="av">{free[g.id]?.map((f, i) => <i key={i} className={f === 0 ? "z" : f < g.units ? "b" : ""}>{f}</i>)}</td>
+              {range && rangeFree && (() => { const f = Math.min(...rangeFree[g.id]); const w = f < g.units ? whoHas(g.id, gear, parts, holds, from, to, rangeFree) : [];
+                return <td><div className={"fq " + (f === 0 ? "none" : f < g.units ? "some" : "all")}><b>{f}</b><span>{w.length ? w.join("; ") : "All free"}</span></div></td>; })()}
+              <td><button className="btn ghost ca" type="button" onClick={(e) => { e.stopPropagation(); setCalFor(g.id); }}>Check availability</button></td>
               <td className="n">{nf(g.price_day)}</td>
             </tr>))]; })}
         </tbody></table></div>}
-      <div className="key"><i className="b">2</i>Some booked<i className="z">0</i>All booked<i>3</i>All free</div>
+      {calFor && <Calendar id={calFor} gear={gear} parts={parts} holds={holds} onClose={() => setCalFor(null)} />}
       {open && <Editor id={open} gear={gear} parts={parts} holds={holds} cats={cats} onClose={() => setOpen(null)} onSaved={async (id) => { await load(); setOpen(id); }} onGone={async () => { await load(); setOpen(null); }} />}
     </div>
   );

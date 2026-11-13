@@ -183,3 +183,38 @@
 .adm .askb{display:flex;gap:10px}
 .adm .full:has(.eg){background:#ffffff}
 .adm .full:has(.eg) .page{padding-top:28px}
+/* gear availability */
+.adm .ca{padding:9px 14px;font-size:13px;background:#e8f3fa;color:#1172a3;white-space:nowrap}
+.adm .dates{display:flex;align-items:flex-end;gap:12px;margin:0 0 18px;padding:16px 0;border-top:2px solid #ECECEC;border-bottom:2px solid #ECECEC}
+.adm .dates>b{font-size:16px;margin-right:8px;align-self:center}
+.adm .dates .fld{width:200px}
+.adm .dates .fld input{background:#ffffff}
+.adm .fq{display:flex;align-items:center;gap:14px}
+.adm .fq b{flex:none;min-width:44px;height:40px;padding:0 10px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+.adm .fq span{font-size:13px;color:#5b6270;line-height:1.4}
+.adm .fq.all b{background:#e8f3fa;color:#1172a3}
+.adm .fq.some b{background:linear-gradient(180deg,#FFEC80,#F5C800);color:#1c1405}
+.adm .fq.none b{background:#0f1720;color:#ffffff}
+.adm .fq.all span{color:#98a2b3}
+.adm .full:has(.calv){background:#ffffff}
+.adm .own{margin-left:12px;font-size:14px;font-weight:500;color:#6b7280}
+.adm .mnav{display:flex;align-items:center;gap:10px}
+.adm .mnav b{min-width:150px;text-align:center;font-size:16px}
+.adm .mnav .btn{width:40px;height:40px;padding:0;font-size:22px}
+.adm .cg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.adm .wd{font-size:12px;font-weight:600;color:#6b7280;padding:0 4px 4px}
+.adm .cd{min-height:86px;border-radius:6px;background:#e8f3fa;padding:10px 12px;display:flex;flex-direction:column;align-items:flex-start}
+.adm .cd .dn{font-size:20px;font-weight:700;color:#1172a3}
+.adm .cd b{font-size:15px;font-weight:700;margin-top:auto;color:#1172a3}
+.adm .cd.some{background:linear-gradient(180deg,#FFEC80,#F5C800)}
+.adm .cd.some .dn,.adm .cd.some b{color:#1c1405}
+.adm .cd.none{background:#0f1720}
+.adm .cd.none .dn,.adm .cd.none b{color:#ffffff}
+.adm .cd.past{background:#F7F7F5}
+.adm .cd.past .dn{color:#98a2b3}
+.adm .cd.out{background:none}
+.adm .cd.today{box-shadow:inset 0 0 0 3px #0f1720}
+.adm .calv .key{display:flex;align-items:center;gap:6px;margin-top:16px;font-size:12.5px;color:#5b6270}
+.adm .key .kf,.adm .key .ks,.adm .key .kn{display:inline-block;width:18px;height:18px;border-radius:3px;margin:0 6px 0 16px}
+.adm .key .kf{background:#e8f3fa;margin-left:0}.adm .key .ks{background:linear-gradient(180deg,#FFEC80,#F5C800)}.adm .key .kn{background:#0f1720}
+.adm .calv .sh{margin-top:24px}
