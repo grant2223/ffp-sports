@@ -2,17 +2,17 @@ import { useEffect, useMemo, useState } from "react";
 import { Shell } from "../site/Static";
 import { useCatalogue } from "../lib/catalogue";
 import { api, sb } from "../lib/supabase";
-import { talentKey, aed, isGear, price, type Catalogue, type Choices, type Dur } from "../lib/pricing";
+import { talentKey, aed, isGear, price, codeKey, type Catalogue, type Choices, type Code, type Dur } from "../lib/pricing";
 import { SPORTS, VENUES } from "../lib/lists";
 import { PRESETS } from "../web/packages";
 
 interface Details { first_name: string; last_name: string; org: string; email: string; phone: string; date: string; time: string; sport: string; venue: string; address: string; notes: string }
-interface State extends Choices { step: number; pkSet: boolean; durSet: boolean; d: Details; code: string; pct: number; codeMsg: string; agree: boolean }
+interface State extends Choices { step: number; pkSet: boolean; durSet: boolean; d: Details; code: string; disc: Code | null; discFor: string; codeMsg: string; agree: boolean }
 
 const KEY = "ffpsBooking";
 const blankDetails: Details = { first_name: "", last_name: "", org: "", email: "", phone: "", date: "", time: "", sport: "", venue: "", address: "", notes: "" };
 const blank: State = { step: 1, svc: "", mode: "crew", pk: "", dur: "2h", on: [], edit: "", eon: [], qty: {}, crewq: {}, talent: [], from: "", to: "", hand: "pickup", setup: false, zone: "dubai",
-  pkSet: false, durSet: false, d: blankDetails, code: "", pct: 0, codeMsg: "", agree: false };
+  pkSet: false, durSet: false, d: blankDetails, code: "", disc: null, discFor: "", codeMsg: "", agree: false };
 const fresh = (svc: string, keep: State): State => ({ ...blank, d: keep.d, zone: keep.zone, svc, mode: svc === "gear" ? "gear" : keep.mode, step: keep.step });
 
 function initial(): State {
@@ -56,7 +56,7 @@ export function Book() {
     onSend={async () => {
       setErr(""); setSending(true);
       try {
-        const r = await api<{ ref: string }>("create_booking", { choices: pickChoices(st), details: st.d, code: st.pct ? st.code : "" });
+        const r = await api<{ ref: string }>("create_booking", { choices: pickChoices(st), details: st.d, code: st.disc ? st.code : "" });
         localStorage.removeItem(KEY); setSent(r);
       } catch (e) { setErr((e as Error).message); } finally { setSending(false); }
     }} />;
@@ -77,7 +77,8 @@ function Flow({ cat, st, put, gear, free, sending, err, onSend }: {
   useEffect(() => { if (crew && pk && st.pk !== pk.id) put({ pk: pk.id }); }, [crew, pk, st.pk]); // eslint-disable-line react-hooks/exhaustive-deps
   const picked = crew && (multi ? st.pkSet : true) && st.durSet;
   const choices = pickChoices(st);
-  const p = useMemo(() => price(cat, crew && !picked ? { ...choices, pk: "" } : choices, st.pct), [cat, JSON.stringify(choices), st.pct, picked, crew]); // eslint-disable-line react-hooks/exhaustive-deps
+  const disc = st.disc && st.discFor === codeKey(cat, choices) ? st.disc : null; // a code checked for one service does not carry to another
+  const p = useMemo(() => price(cat, crew && !picked ? { ...choices, pk: "" } : choices, disc ?? 0), [cat, JSON.stringify(choices), JSON.stringify(disc), picked, crew]); // eslint-disable-line react-hooks/exhaustive-deps
   const zone = cat.zones.find((z) => z.id === st.zone) || cat.zones[0];
   const edits = sv ? cat.extras.filter((e) => e.service_id === sv.id && e.kind === "edit_level") : [];
   const eadds = sv ? cat.extras.filter((e) => e.service_id === sv.id && e.kind === "edit_extra") : [];
@@ -288,10 +289,10 @@ function Flow({ cat, st, put, gear, free, sending, err, onSend }: {
               </div>
               <div className="f" style={{ marginTop: 14 }}><label htmlFor="dx">Anything we should know</label><textarea id="dx" rows={3} value={d.notes} placeholder="Teams, schedule, where the stream should go" onChange={setD("notes")} /></div>
               <div style={{ marginTop: 14, display: "flex", gap: 10 }}>
-                <div className="f" style={{ flex: 1 }}><label htmlFor="dc">Partner code, if you have one</label><input id="dc" type="text" value={st.code} placeholder="Enter code" onChange={(e) => put({ code: e.target.value, pct: 0, codeMsg: "" })} /></div>
-                <button className="btn ghost" type="button" onClick={async () => { if (!st.code) return; try { const r = await api<{ pct: number }>("check_code", { code: st.code }); put({ pct: r.pct, codeMsg: r.pct ? "Partner discount applied." : "That code isn't valid." }); } catch { put({ codeMsg: "Couldn't check the code. Try again." }); } }}>Apply</button>
+                <div className="f" style={{ flex: 1 }}><label htmlFor="dc">Discount code, if you have one</label><input id="dc" type="text" value={st.code} placeholder="Enter code" onChange={(e) => put({ code: e.target.value, disc: null, codeMsg: "" })} /></div>
+                <button className="btn ghost" type="button" onClick={async () => { if (!st.code.trim()) return; try { const r = await api<Code & { msg: string }>("check_code", { code: st.code, choices: pickChoices(st), email: st.d.email }); const ok = !r.msg && ((r.pct ?? 0) > 0 || (r.amount ?? 0) > 0); put({ disc: ok ? { pct: r.pct, amount: r.amount, min: r.min } : null, discFor: codeKey(cat, choices), codeMsg: r.msg || (ok ? "" : "That code isn't valid.") }); } catch { put({ disc: null, codeMsg: "Couldn't check the code. Try again." }); } }}>Apply</button>
               </div>
-              {st.codeMsg && <p className="avail">{st.codeMsg}</p>}
+              {st.codeMsg ? <p className="avail">{st.codeMsg}</p> : disc && (p.short ? <p className="avail">Spend {aed(p.short)} more to use this code.</p> : p.disc ? <p className="avail">Code applied: {disc.pct ? `${disc.pct}% off, ` : ""}{aed(p.disc)} off.</p> : <p className="avail">This code doesn't take anything off this booking.</p>)}
             </div>}
 
             {st.step === 6 && <div>

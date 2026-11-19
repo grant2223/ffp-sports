@@ -1,18 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { sb } from "../lib/supabase";
 import { loadCatalogue } from "../lib/catalogue";
-import { EditTable, useToast } from "./kit";
+import { EditTable } from "./kit";
 
 type Row = Record<string, any>;
 
 export function Prices() {
-  const toast = useToast();
-  const [pk, setPk] = useState<Row[]>([]); const [ex, setEx] = useState<Row[]>([]); const [zones, setZones] = useState<Row[]>([]); const [codes, setCodes] = useState<Row[]>([]); const [svcs, setSvcs] = useState<Row[]>([]);
-  const [code, setCode] = useState({ code: "", pct: "5", note: "" });
+  const [pk, setPk] = useState<Row[]>([]); const [ex, setEx] = useState<Row[]>([]); const [zones, setZones] = useState<Row[]>([]); const [svcs, setSvcs] = useState<Row[]>([]);
   const load = useCallback(async () => {
-    const [a, b, c, d, e] = await Promise.all([sb.from("packages").select("*").order("service_id").order("sort"), sb.from("extras").select("*").order("service_id").order("kind").order("sort"),
-      sb.from("zones").select("*").order("sort"), sb.from("partner_codes").select("*").order("created_at", { ascending: false }), sb.from("services").select("*").order("sort")]);
-    setPk(a.data ?? []); setEx(b.data ?? []); setZones(c.data ?? []); setCodes(d.data ?? []); setSvcs(e.data ?? []); loadCatalogue(true);
+    const [a, b, c, e] = await Promise.all([sb.from("packages").select("*").order("service_id").order("sort"), sb.from("extras").select("*").order("service_id").order("kind").order("sort"),
+      sb.from("zones").select("*").order("sort"), sb.from("services").select("*").order("sort")]);
+    setPk(a.data ?? []); setEx(b.data ?? []); setZones(c.data ?? []); setSvcs(e.data ?? []); loadCatalogue(true);
   }, []);
   useEffect(() => { load(); }, [load]);
   const KIND: Record<string, string> = { addon: "Add-ons on the day", edit_level: "Editing levels", edit_extra: "Editing extras" };
@@ -35,15 +33,6 @@ export function Prices() {
       </div>)}
       <h2 style={{ marginTop: 32 }}>Emirates, travel and delivery</h2>
       <EditTable table="zones" rows={zones} onSaved={load} cols={[{ k: "name", label: "Emirate" }, { k: "travel_per_crew", label: "Crew travel, per crew per day", type: "num", w: 220 }, { k: "delivery", label: "Gear drop-off plus pick-up", type: "num", w: 220 }]} />
-      <h2 style={{ marginTop: 32 }}>Partner codes</h2>
-      <p className="muted" style={{ marginTop: -6 }}>A code takes its percentage off, but never below the 40% margin floor.</p>
-      <div className="bar">
-        <label className="fld" style={{ width: 200 }}><span>Code</span><input value={code.code} onChange={(e) => setCode({ ...code, code: e.target.value.toUpperCase().replace(/\s/g, "") })} /></label>
-        <label className="fld" style={{ width: 120 }}><span>% off</span><input type="number" value={code.pct} onChange={(e) => setCode({ ...code, pct: e.target.value })} /></label>
-        <label className="fld grow"><span>Who it's for</span><input value={code.note} onChange={(e) => setCode({ ...code, note: e.target.value })} /></label>
-        <button className="btn gold" type="button" disabled={!code.code} onClick={async () => { const { error } = await sb.from("partner_codes").insert({ code: code.code, pct: Number(code.pct), note: code.note }); if (error) toast(error.message); else { toast("Code added"); setCode({ code: "", pct: "5", note: "" }); load(); } }}>Add code</button>
-      </div>
-      {codes.length > 0 && <EditTable table="partner_codes" keyCol="code" rows={codes} onSaved={load} cols={[{ k: "code", label: "Code", type: "ro" }, { k: "pct", label: "% off", type: "num", w: 100 }, { k: "note", label: "Who it's for" }, { k: "active", label: "Works", type: "bool", w: 100 }]} />}
     </div>
   );
 }

@@ -21,7 +21,10 @@ F['staff_roles'] = [dict(staff_id='s1', role_id='commentator', day_rate=None), d
 F['quotes'] = [dict(id='q1', number='FFPS-Q-0144', status='draft', org='Augustus Media', attention='Kirby', email='kirby@example.com', subject='Gear rental, Sony Z200 and tripods', issue_date='2026-11-11', valid_until='2026-11-12',
                     lines=[dict(desc='Sony Z200 camera rental', note='Broadcast camcorder, 20x zoom', qty=8, days=1, unit=750, cost=0), dict(desc='Video tripod with fluid head rental', qty=8, days=1, unit=100, cost=0), dict(desc='Drop-off, Dubai', note='Fri 13 Nov 2026, 9:00 am', qty=1, unit=150, cost=75), dict(desc='Pick-up, Dubai', qty=1, unit=150, cost=75)],
                     terms=['Dates: drop-off Fri 13 Nov 2026 at 9:00 am.', 'Location: Dubai.'], total=7100, cost=150, created_at=NOW)]
-F['partner_codes'] = []
+F['partner_codes'] = [
+ dict(code='BUZZER10', note='Buzzer', kind='pct', pct=10, amount=0, services=['gear'], min_spend=0, starts_on='2026-11-19', ends_on='2026-12-31', max_uses=3, once_per_client=True, active=True, created_at='2026-11-19T10:00:00Z'),
+ dict(code='DESERTBARBELL', note='Desert Barbell', kind='amount', pct=0, amount=500, services=['live'], min_spend=2500, starts_on=None, ends_on=None, max_uses=None, once_per_client=False, active=True, created_at='2026-11-18T10:00:00Z'),
+ dict(code='EID25', note='Eid offer', kind='amount', pct=0, amount=250, services=['video','photo'], min_spend=0, starts_on='2026-10-01', ends_on='2026-11-15', max_uses=None, once_per_client=False, active=True, created_at='2026-10-01T10:00:00Z')]
 F['email_log'] = [dict(id=1, to_email='sara@club.com', subject='We have your request FFPS-R-10001', kind='booking_received', ok=False, error='Email not set up yet (RESEND_API_KEY missing)', created_at=NOW)]
 
 # mirror migration 0005: public role rates without cost, service roles, new add-ons
@@ -67,6 +70,7 @@ F['gear'] = _live['gear']; F['gear_parts'] = _live['parts']
 F['gear_holds'] = [dict(id='h1', booking_id='b9', gear_id='kit3', qty=1, date_from='2026-11-20', date_to='2026-11-21', bookings=dict(ref='FFPS-R-10014', status='confirmed', first_name='Kirby', last_name='Lee', org='Augustus Media', handover='pickup')),
                    dict(id='h2', booking_id='b8', gear_id='pyros', qty=2, date_from='2026-11-22', date_to='2026-11-24', bookings=dict(ref='FFPS-R-10015', status='requested', first_name='Sam', last_name='Hart', org='Dubai Rugby 7s', handover='delivery'))]
 writes = []
+F['bookings'][0].update(code='BUZZER10', discount=100)
 
 F['invoices'] = [dict(id='i1', number='FFPS-INV-0001', status='draft', quote_id=None, booking_id=None, quote_number='FFPS-Q-0143', org='Augustus Media', attention='Kirby', email='kirby@augustusmedia.com',
   subject='Camera rental, 8 Sony PXW-Z200 kits', issue_date='2026-11-12', due_date='2026-11-12', total=7100, paid=0, created_at=NOW, sent_at=None, paid_at=None,
@@ -98,7 +102,7 @@ def handle(route, req):
             v = v[0]
             if v.startswith('eq.'): rows = [r for r in rows if str(r.get(k.split('.')[-1])).lower() == v[3:].lower()]
             elif v.startswith('in.('): vals = v[4:-1].split(','); rows = [r for r in rows if str(r.get(k)) in [x.strip('"') for x in vals]]
-        if req.method in ('POST', 'PATCH', 'DELETE') and t in ('gear', 'gear_parts'):
+        if req.method in ('POST', 'PATCH', 'DELETE') and t in ('gear', 'gear_parts', 'partner_codes'):
             body = json.loads(req.post_data or 'null'); writes.append((req.method, t, dict((k, v[0]) for k, v in q.items()), body))
             if req.method == 'POST':
                 for nb in (body if isinstance(body, list) else [body]):

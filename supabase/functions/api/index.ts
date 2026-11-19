@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { aed, type Catalogue, type Choices, isGear, price, rentalDays, talentKey } from "./pricing.ts";
+import { aed, type Catalogue, type Choices, type Code, codeKey, isGear, price, rentalDays, talentKey } from "./pricing.ts";
 import { bookingReceived, adminAlert, confirmation, paymentReceipt, declined, quoteEmail, invoiceEmail, estimateReceived, wrap } from "./emails.ts";
 
 const cors = {
@@ -54,6 +54,39 @@ async function send(to: string[], subject: string, html: string, kind: string, i
 }
 
 const clean = (v: unknown, max = 300) => String(v ?? "").trim().slice(0, max);
+const SVC_NAME: Record<string, string> = { gear: "gear rental" };
+const dayUAE = () => new Date(Date.now() + 4 * 3600e3).toISOString().slice(0, 10);
+const longDate = (d: string) => new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+
+// every rule on a discount code; returns the discount to apply, or the plain reason it can't be used
+async function checkCode(cat: Catalogue, raw: unknown, c: Choices | null, email: string): Promise<{ code: string; disc: Code; msg: string }> {
+  const code = clean(raw, 40).toUpperCase();
+  const none = (msg: string) => ({ code: "", disc: {}, msg });
+  if (!code) return none("");
+  const { data: k } = await db.from("partner_codes").select("*").eq("code", code).maybeSingle();
+  if (!k || !k.active) return none("That code isn't valid.");
+  const today = dayUAE();
+  if (k.starts_on && today < k.starts_on) return none(`This code starts on ${longDate(k.starts_on)}.`);
+  if (k.ends_on && today > k.ends_on) return none(`This code ended on ${longDate(k.ends_on)}.`);
+  const svcs: string[] = k.services ?? [];
+  if (c && svcs.length && !svcs.includes(codeKey(cat, c))) {
+    const names = svcs.map((x) => SVC_NAME[x] ?? cat.services.find((s) => s.id === x)?.name.toLowerCase() ?? x);
+    const list = names.length > 1 ? names.slice(0, -1).join(", ") + " and " + names[names.length - 1] : names[0];
+    return none(`This code is for ${list} only.`);
+  }
+  const live = ["declined", "cancelled"];
+  if (k.max_uses) {
+    const { count } = await db.from("bookings").select("id", { count: "exact", head: true }).eq("code", code).not("status", "in", `(${live.join(",")})`);
+    if ((count ?? 0) >= k.max_uses) return none("This code has been used up.");
+  }
+  if (k.once_per_client && email) {
+    const { count } = await db.from("bookings").select("id", { count: "exact", head: true }).eq("code", code).ilike("email", email).not("status", "in", `(${live.join(",")})`);
+    if ((count ?? 0) > 0) return none("You've already used this code.");
+  }
+  const disc: Code = k.kind === "amount" ? { amount: Number(k.amount) } : { pct: Number(k.pct) };
+  if (Number(k.min_spend) > 0) disc.min = Number(k.min_spend);
+  return { code, disc, msg: "" };
+}
 const isDate = (v: string) => /^\d{4}-\d{2}-\d{2}$/.test(v);
 
 Deno.serve(async (req) => {
@@ -69,8 +102,8 @@ Deno.serve(async (req) => {
 
     // ---------------- public ----------------
     if (body.action === "check_code") {
-      const { data } = await db.from("partner_codes").select("pct").eq("code", clean(body.code, 40).toUpperCase()).eq("active", true).maybeSingle();
-      return ok({ pct: data?.pct ?? 0 });
+      const r = await checkCode(cat, body.code, (body.choices as Choices) ?? null, clean(body.email, 160).toLowerCase());
+      return ok({ ...r.disc, msg: r.msg });
     }
 
     if (body.action === "create_booking") {
@@ -90,10 +123,11 @@ Deno.serve(async (req) => {
         if (!clean(d.venue)) return fail("Add your venue");
         if (!c.pk) return fail("Choose a package");
       }
-      let pct = 0;
-      const code = clean(body.code, 40).toUpperCase();
-      if (code) { const { data } = await db.from("partner_codes").select("pct").eq("code", code).eq("active", true).maybeSingle(); pct = data?.pct ?? 0; }
-      const p = price(cat, c, pct);
+      const chk = await checkCode(cat, body.code, c, email);
+      if (chk.msg) return fail(chk.msg);
+      const code = chk.code;
+      const p = price(cat, c, chk.disc);
+      if (code && !p.disc) return fail(p.short ? `Spend ${aed(p.short)} more to use this code.` : "That code doesn't take anything off this booking.");
       if (p.total <= 0) return fail("Your booking is empty");
       if (gear) {
         const { data: free } = await db.rpc("gear_free", { p_from: c.from, p_to: c.to });

@@ -60,7 +60,7 @@
 .adm .x{width:40px;height:40px;border-radius:6px;border:0;background:#EFEFEC;font-size:22px;line-height:1;cursor:pointer}
 .adm .cols{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px;align-items:start}
 .adm .stack{display:flex;flex-direction:column;gap:20px}
-.adm .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:80;background:#0f1720;color:#ffffff;font-weight:600;padding:12px 20px;border-radius:6px}
+.adm .toast{position:fixed;top:0;left:0;right:0;z-index:120;background:linear-gradient(180deg,#FFEC80,#F5C800);color:#1c1405;font-size:17px;font-weight:700;text-align:center;padding:18px 24px;box-shadow:0 2px 0 rgba(0,0,0,.08)}
 .adm .login{max-width:420px;margin:12vh auto 0;padding:32px;background:#ffffff;border-radius:8px}
 .adm .login img{height:34px;margin-bottom:24px}
 .adm .kv{display:grid;grid-template-columns:140px 1fr;gap:6px 14px;font-size:14px}
@@ -218,3 +218,23 @@
 .adm .key .kf,.adm .key .ks,.adm .key .kn{display:inline-block;width:18px;height:18px;border-radius:3px;margin:0 6px 0 16px}
 .adm .key .kf{background:#e8f3fa;margin-left:0}.adm .key .ks{background:linear-gradient(180deg,#FFEC80,#F5C800)}.adm .key .kn{background:#0f1720}
 .adm .calv .sh{margin-top:24px}
+/* discount codes */
+.adm .cx table.gt{width:100%;border-collapse:collapse;background:none}
+.adm .cx table.gt th{background:none;border:0;text-align:left;font-size:12px;font-weight:600;color:#6b7280;padding:0 14px 10px}
+.adm .cx table.gt th.n,.adm .cx table.gt td.n{text-align:right}
+.adm .cx table.gt td{border:0;padding:14px;background:#ffffff}
+.adm .cx table.gt tbody tr:nth-child(even) td{background:#FAFAF8}
+.adm .cx table.gt tbody tr:hover td{background:#e8f3fa}
+.adm .ct .cc{display:block;font-size:15px;font-weight:700;letter-spacing:.04em}
+.adm .ct .who{display:block;font-size:12.5px;color:#6b7280;margin-top:2px}
+.adm .ct .dsc{font-weight:600}
+.adm .st{font-size:13px;font-weight:600}
+.adm .st.works{color:#12804a}.adm .st.used,.adm .st.ended,.adm .st.off,.adm .st.soon{color:#6b7280}
+.adm input.big{font-size:18px;font-weight:700;letter-spacing:.05em}
+.adm .sfx{display:flex;align-items:center;gap:8px}.adm .sfx input{flex:1;min-width:0}.adm .sfx em{font-style:normal;font-weight:600;color:#5b6270}
+.adm .cx h2.sh{border-top:0;padding-top:0;margin-top:22px}
+.adm .cx .pr,.adm .cx .bk div{border-bottom:0}
+.adm .cx .pr{background:#e8f3fa;border-radius:6px;padding:8px 6px 8px 14px;color:#1172a3;margin-bottom:6px}
+.adm .cx .pr.all{padding:12px 14px;color:#5b6270;background:#F2F2EF}
+.adm .delb{align-self:flex-start;margin-top:28px;background:#fdecec;color:#d6353b}
+.adm .full:has(.cx){background:#ffffff}

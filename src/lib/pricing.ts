@@ -27,7 +27,11 @@ export interface Choices {
   zone: string;
 }
 export interface Line { label: string; v: number }
-export interface Price { lines: Line[]; sub: number; cost: number; disc: number; total: number; deposit: number; crew: number; days: number; holds: { gear_id: string; qty: number }[]; split: boolean }
+export interface Price { lines: Line[]; sub: number; cost: number; disc: number; total: number; deposit: number; crew: number; days: number; holds: { gear_id: string; qty: number }[]; split: boolean; short: number }
+// a discount code: a percentage or a fixed AED amount, with an optional minimum spend
+export interface Code { pct?: number; amount?: number; min?: number }
+// the key a code's service list is checked against: "gear" for any gear rental, otherwise the service id
+export const codeKey = (cat: Catalogue, c: Choices) => (isGear(cat, c) ? "gear" : c.svc);
 
 const num = (s: string | undefined, d: number) => (s === undefined || s === "" || isNaN(Number(s)) ? d : Number(s));
 
@@ -43,7 +47,8 @@ export function isGear(cat: Catalogue, c: Choices): boolean {
   return c.svc === "gear" || (!!s && s.gearable && c.mode === "gear");
 }
 
-export function price(cat: Catalogue, c: Choices, codePct = 0): Price {
+export function price(cat: Catalogue, c: Choices, code: number | Code = 0): Price {
+  const cd: Code = typeof code === "number" ? { pct: code } : code;
   const S = cat.settings;
   const lines: Line[] = [];
   let sub = 0, cost = 0, crew = 0, deposit = 0, days = 0, crewSub = 0, crewCost = 0;
@@ -119,11 +124,13 @@ export function price(cat: Catalogue, c: Choices, codePct = 0): Price {
   // partner discounts never apply to crew or talent: crew rates sit at the margin floor, talent at their own rate plus our markup
   const dsub = sub - crewSub, dcost = cost - crewCost;
   const maxOff = Math.max(0, dsub - dcost / (1 - floor));
-  const disc = codePct > 0 ? Math.min(dsub * codePct / 100, maxOff) : 0;
-  if (disc) lines.push({ label: "Partner discount", v: -disc });
+  // a minimum spend counts the booking before the discount
+  const short = cd.min && sub < cd.min ? cd.min - sub : 0;
+  const disc = short ? 0 : (cd.pct ?? 0) > 0 ? Math.min(dsub * (cd.pct ?? 0) / 100, maxOff) : (cd.amount ?? 0) > 0 ? Math.min(cd.amount ?? 0, dsub, maxOff) : 0;
+  if (disc) lines.push({ label: "Discount code", v: -disc });
   const total = Math.round((sub - disc) * 100) / 100;
   const split = !isGear(cat, c) && total > num(S.split_over, 10000);
-  return { lines, sub, cost, disc, total, deposit, crew, days, holds, split };
+  return { lines, sub, cost, disc, total, deposit, crew, days, holds, split, short };
 }
 
 export const aed = (n: number) => (n < 0 ? "−AED " : "AED ") + Math.abs(Math.round(n)).toLocaleString("en-US");

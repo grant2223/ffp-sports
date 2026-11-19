@@ -9,9 +9,10 @@ import { GearTab } from "./Gear";
 import { Crew } from "./Crew";
 import { Prices } from "./Prices";
 import { SettingsTab } from "./Settings";
+import { CodesTab } from "./Codes";
 import "./admin.css";
 
-const TABS = [["bookings", "Bookings"], ["quotes", "Quotes"], ["invoices", "Invoices"], ["gear", "Gear"], ["crew", "Crew and roles"], ["prices", "Prices"], ["settings", "Settings"]] as const;
+const TABS = [["bookings", "Bookings"], ["quotes", "Quotes"], ["invoices", "Invoices"], ["gear", "Gear"], ["crew", "Crew and roles"], ["prices", "Prices"], ["codes", "Discount codes"], ["settings", "Settings"]] as const;
 type Tab = (typeof TABS)[number][0];
 
 export default function Admin() {
@@ -56,6 +57,7 @@ export default function Admin() {
         {tab === "gear" && <GearTab />}
         {tab === "crew" && <Crew />}
         {tab === "prices" && <Prices />}
+        {tab === "codes" && <CodesTab />}
         {tab === "settings" && <SettingsTab />}
       </ToastProvider>
     </div>

@@ -6,7 +6,7 @@ const ToastCtx = createContext<(m: string) => void>(() => {});
 export const useToast = () => useContext(ToastCtx);
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [m, setM] = useState("");
-  const show = useCallback((x: string) => { setM(x); window.clearTimeout((show as any)._t); (show as any)._t = window.setTimeout(() => setM(""), 2600); }, []);
+  const show = useCallback((x: string) => { setM(x); window.clearTimeout((show as any)._t); (show as any)._t = window.setTimeout(() => setM(""), 4000); }, []);
   return <ToastCtx.Provider value={show}>{children}{m && <div className="toast" role="status">{m}</div>}</ToastCtx.Provider>;
 }
 
@@ -70,3 +70,24 @@ export function useAsk(): [ReactNode, (q: { title: string; text?: string; yes: s
     </div>) : null;
   return [el, ask];
 }
+
+// A searchable dropdown. Its list opens in the page flow, never floating over it.
+export function Combo({ value, options, onPick, placeholder, allowNew }: { value: string; options: [string, string][]; onPick: (v: string) => void; placeholder: string; allowNew?: boolean }) {
+  const [open, setOpen] = useState(false);
+  const [t, setT] = useState("");
+  const label = options.find(([v]) => v === value)?.[1] ?? value;
+  const list = options.filter(([, l]) => !t || l.toLowerCase().includes(t.toLowerCase()));
+  const pick = (v: string) => { onPick(v); setOpen(false); setT(""); };
+  return (
+    <div className={"combo" + (open ? " open" : "")}>
+      <label className="dd"><input value={open ? t : label} placeholder={open ? "Search" : placeholder} onFocus={() => setOpen(true)} onChange={(e) => setT(e.target.value)}
+        onBlur={() => setTimeout(() => { setOpen(false); setT(""); }, 150)}
+        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); if (list[0]) pick(list[0][0]); else if (allowNew && t.trim()) pick(t.trim()); } if (e.key === "Escape") (e.target as HTMLInputElement).blur(); }} />
+        <span className="chev" /></label>
+      {open && <div className="opts">{list.map(([v, l]) => <button key={v || "_"} type="button" className={v === value ? "on" : ""} onMouseDown={(e) => { e.preventDefault(); pick(v); }}>{l}</button>)}
+        {allowNew && t.trim() && !options.some(([, l]) => l.toLowerCase() === t.trim().toLowerCase()) && <button type="button" onMouseDown={(e) => { e.preventDefault(); pick(t.trim()); }}>Add “{t.trim()}”</button>}
+        {!list.length && !allowNew && <span className="none">No match</span>}</div>}
+    </div>
+  );
+}
+
