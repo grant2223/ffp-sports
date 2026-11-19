@@ -2,7 +2,8 @@ import { I, addonIcon } from "./Icons";
 import { CtaBand, Faq, Page, link } from "./Layout";
 import { Theatre } from "./Home";
 import C from "./content.json";
-import { PACKS, POD_EXTRAS, LIVE_EXTRAS, VIDEO_EXTRAS } from "./packages";
+import { PACKS, PRESETS, POD_EXTRAS, LIVE_EXTRAS, VIDEO_EXTRAS } from "./packages";
+import { price, type Catalogue, type Choices } from "../lib/pricing";
 import { Deliverable } from "./Deliverable";
 import { CrewAddons } from "./Crew";
 import { useCatalogue } from "../lib/catalogue";
@@ -21,7 +22,15 @@ function useLiveExtra() {
   };
 }
 
+// A package card's price is the booking total for its preset, from the live rates; the full-day line uses the same choices for a day.
+function packPrice(cat: Catalogue | null, pid: string, dur?: "day"): number | null {
+  const pre = PRESETS[pid]; if (!cat || !pre) return null;
+  const c: Choices = { svc: pre.svc, mode: "crew", pk: pre.pk, dur: dur ?? pre.dur, on: pre.on ?? [], edit: pre.edit ?? "", eon: pre.eon ?? [], qty: {}, from: "", to: "", hand: "pickup", setup: false, zone: "dubai" };
+  return price(cat, c).total;
+}
+
 export function Service({ id }: { id: string }) {
+  const { cat } = useCatalogue();
   const live = useLiveExtra();
   const s = C.services.find((x) => x.id === id)!;
   const book = BOOK[id];
@@ -41,7 +50,8 @@ export function Service({ id }: { id: string }) {
             <div className="bd">
               <h3>{p.name}</h3>
               <p className="out">{p.best}</p>
-              <div className="pr"><b>AED {p.price.toLocaleString("en")}</b><span>{p.per}</span>{p.alt && <em>{p.alt}</em>}</div>
+              {(() => { const now = packPrice(cat, p.id), day = p.alt ? packPrice(cat, p.id, "day") : null;
+                return <div className="pr"><b>{now === null ? "\u00a0" : "AED " + now.toLocaleString("en")}</b><span>{p.per}</span>{day !== null && <em>Full day AED {day.toLocaleString("en")}</em>}</div>; })()}
               <p className="gh">You receive</p>
               <dl className="gets">{p.gets.map((g, i) => <div key={i}><dt>{g.v}</dt><dd>{g.t}</dd></div>)}</dl>
               <span className="fs-btn y">Book this package {I.arrow({ s: 18 })}</span>
