@@ -6,7 +6,6 @@ import { Legal } from "./site/Legal";
 import { Home } from "./web/Home";
 import { Service } from "./web/Service";
 import { Gear } from "./web/Gear";
-import { Talent } from "./web/Talent";
 
 const Admin = lazy(() => import("./admin/Admin"));
 const SVC: Record<string, [string, string]> = {
@@ -25,6 +24,5 @@ export default function App() {
   if (path === "/privacy") return <><Title t="Privacy | FFP Sports" /><Legal kind="privacy" /></>;
   if (SVC[path]) return <><Title t={SVC[path][1] + " | FFP Sports"} /><Service key={path} id={SVC[path][0]} /></>;
   if (path === "/gear-rental") return <><Title t="Gear rental | FFP Sports" /><Gear /></>;
-  if (path === "/talent") return <><Title t="Talent | FFP Sports" /><Talent /></>;
   return <><Title t="FFP Sports | Livestream, video, photography and podcasting in the UAE" /><Home /></>;
 }

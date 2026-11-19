@@ -169,7 +169,7 @@
     },
     {
      "q": "Can we use our own commentator?",
-     "a": "Yes. On the 3-camera package they plug a headset into our commentary desk. Or pick one of ours on the Talent page."
+     "a": "Yes. On the 3-camera package they plug a headset into our commentary desk. Or add one of ours when you book."
     },
     {
      "q": "What if the match runs over time?",
@@ -707,58 +707,6 @@
   {
    "q": "Is the vMix system hard to run?",
    "a": "It needs an experienced operator. Most clients add Set-up and handover, or book our crew to run it."
-  }
- ],
- "talentFaq": [
-  {
-   "q": "Who are the talent?",
-   "a": "Commentators, MCs, presenters, interviewers and announcers with an approved FFP Talent profile. Every profile is checked against a real reel."
-  },
-  {
-   "q": "Can I watch them first?",
-   "a": "Yes. Every profile has a reel of their work."
-  },
-  {
-   "q": "Can I book talent without your crew?",
-   "a": "Yes. Book them on their own for your event, or add them to a livestream."
-  },
-  {
-   "q": "What is included?",
-   "a": "The talent on site for the time you book, plus preparation: team lists, name pronunciation and your run sheet."
-  },
-  {
-   "q": "What should I send them?",
-   "a": "Team sheets, the schedule and any sponsor reads, at least 48 hours before."
-  },
-  {
-   "q": "Can they work in Arabic?",
-   "a": "Filter by language to see who presents in Arabic and other languages."
-  },
-  {
-   "q": "How do I join as talent?",
-   "a": "Create your FFP Talent profile and upload your reel. Once approved, you show here."
-  }
- ],
- "talent": [
-  {
-   "name": "Grant Goes",
-   "photo": "/img/grant.jpg",
-   "roles": [
-    "Commentator",
-    "MC and host",
-    "Presenter"
-   ],
-   "sports": [
-    "Rugby",
-    "Football",
-    "Running",
-    "Fitness"
-   ],
-   "langs": [
-    "English"
-   ],
-   "credits": "UAE Rugby, UAE FA, Dubai Run, Dubai Fitness Challenge",
-   "reel": "https://www.youtube.com/watch?v=sWw24pO_3s8"
   }
  ]
 }
