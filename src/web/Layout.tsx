@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 import { go } from "../lib/router";
 import { I } from "./Icons";
-import C from "./content.json";
 
 export const link = (to: string) => (e: React.MouseEvent) => { if (e.metaKey || e.ctrlKey) return; e.preventDefault(); go(to); };
 export const SVC_PATH: Record<string, string> = { live: "/livestream", video: "/video", photo: "/photography", pod: "/podcasting" };
+const MENU: [string, string, string, string][] = [
+  ["/livestream", "Livestream", "Live with scores on screen", "/img/gfxplayer.jpg"],
+  ["/video", "Video", "Your event filmed in 4K", "/img/poolcam.jpg"],
+  ["/photography", "Photography", "Action, teams and awards", "/img/flag.jpg"],
+  ["/podcasting", "Podcasting", "A full podcast set at your venue", "/img/pod.jpg"],
+  ["/gear-rental", "Gear rental", "Cameras and kits, run it yourself", "/img/stadiumcam.jpg"],
+];
+const CHEV = <svg className="fs-menu-go" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>;
 const NAV: [string, string][] = [["/livestream", "Livestream"], ["/video", "Video"], ["/photography", "Photography"], ["/podcasting", "Podcasting"], ["/gear-rental", "Gear rental"]];
 
 export function Nav({ book = "/book" }: { book?: string }) {
@@ -25,13 +32,10 @@ export function Nav({ book = "/book" }: { book?: string }) {
       {open && <div className="fs-menu" role="dialog" aria-label="Menu">
         <div className="fs-menu-top"><img src="/img/logo-white.png" alt="FFP Sports" style={{ height: 28 }} />
           <button className="fs-burger" style={{ display: "flex", margin: 0 }} type="button" aria-label="Close menu" onClick={() => setOpen(false)}>{I.close({ s: 26 })}</button></div>
-        <div className="fs-menu-list">
-          {C.services.map((s) => <a key={s.id} className="fs-menu-item" href={SVC_PATH[s.id]} onClick={(e) => { setOpen(false); link(SVC_PATH[s.id])(e); }}>
-            <img src={s.hero} alt="" /><span><b>{s.name}</b><span>{s.card}</span></span></a>)}
-        </div>
-        <div className="fs-menu-more">
-          {[["/gear-rental", "Gear rental"], ["/terms", "Booking terms"]].map(([p, l]) => <a key={p} href={p} onClick={(e) => { setOpen(false); link(p)(e); }}>{l}</a>)}
-        </div>
+        <nav className="fs-menu-list" aria-label="Pages">
+          {MENU.map(([p, t, line, img]) => <a key={p} className={"fs-menu-item" + (here === p ? " on" : "")} href={p} onClick={(e) => { setOpen(false); link(p)(e); }}>
+            <img src={img} alt="" className={p === "/livestream" ? "live" : undefined} /><span><b>{t}</b><span>{line}</span></span>{CHEV}</a>)}
+        </nav>
         <div className="fs-menu-cta">
           <a className="fs-btn w" href="/estimate" onClick={(e) => { setOpen(false); link("/estimate")(e); }}>Get an estimate</a>
           <a className="fs-btn y" href={book} onClick={(e) => { setOpen(false); link(book)(e); }}>Book now</a>
