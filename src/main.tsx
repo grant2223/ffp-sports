@@ -11,5 +11,9 @@ import "./site/base.css";
 import "./site/home.css";
 import "./site/book.css";
 import "./web/web.css";
+import { loadCatalogue } from "./lib/catalogue";
+
+// start fetching live prices at once, so service pages show them as they open
+if (!location.pathname.startsWith("/admin")) loadCatalogue().catch(() => {});
 
 createRoot(document.getElementById("root")!).render(<StrictMode><App /></StrictMode>);

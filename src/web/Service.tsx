@@ -15,8 +15,12 @@ const BOOK: Record<string, string> = { live: "/book?s=live", video: "/book?s=vid
 function useLiveExtra() {
   const { cat } = useCatalogue();
   return (it: SiteExtra): SiteExtra => {
+    if (it.diff) { // priced as the difference between two editing options, e.g. full film added to highlights
+      const [a, b] = it.diff.map((id) => cat?.extras.find((x) => x.id === id));
+      return a && b ? { ...it, price: "AED " + (Number(a.price_2h) - Number(b.price_2h)).toLocaleString("en") } : { ...it, price: "" };
+    }
     const e = it.id ? cat?.extras.find((x) => x.id === it.id) : undefined;
-    if (!e) return it;
+    if (!e) return it.id ? { ...it, price: "" } : it;
     const v = e.per_crew_hour ? Number(cat!.settings.extra_hour_client || 750) : e.price_2h;
     return { ...it, name: e.name, d: e.strap, price: "AED " + Number(v).toLocaleString("en") + (e.per_crew_hour ? " an hour each" : ""), details: e.details ?? [] };
   };
@@ -50,7 +54,7 @@ export function Service({ id }: { id: string }) {
             <div className="bd">
               <h3>{p.name}</h3>
               <p className="out">{p.best}</p>
-              {(() => { const now = packPrice(cat, p.id), day = p.alt ? packPrice(cat, p.id, "day") : null;
+              {(() => { const now = packPrice(cat, p.id), day = p.day ? packPrice(cat, p.id, "day") : null;
                 return <div className="pr"><b>{now === null ? "\u00a0" : "AED " + now.toLocaleString("en")}</b><span>{p.per}</span>{day !== null && <em>Full day AED {day.toLocaleString("en")}</em>}</div>; })()}
               <p className="gh">You receive</p>
               <dl className="gets">{p.gets.map((g, i) => <div key={i}><dt>{g.v}</dt><dd>{g.t}</dd></div>)}</dl>
@@ -67,7 +71,7 @@ export function Service({ id }: { id: string }) {
         <div className={"ax-grid n" + (id === "live" ? LIVE_EXTRAS : id === "video" ? VIDEO_EXTRAS : POD_EXTRAS).length}>{(id === "live" ? LIVE_EXTRAS : id === "video" ? VIDEO_EXTRAS : POD_EXTRAS).map((g) => (
           <div key={g.name} className="ax">
             <div className="ax-ph"><img src={g.img} alt="" loading="lazy" style={g.pos ? { objectPosition: g.pos } : undefined} /><h3>{g.name}</h3></div>
-            <ul>{g.items.map(live).filter((it) => it.price).map((it) => <li key={it.name}><span><b>{it.name}</b><small>{it.d}</small>
+            <ul>{g.items.map(live).filter((it) => it.price || (!cat && (it.id || it.diff))).map((it) => <li key={it.name}><span><b>{it.name}</b><small>{it.d}</small>
               {(it.details ?? []).length > 0 && <details className="ax-d"><summary>What you get</summary><ul>{it.details!.map((d) => <li key={d}>{d}</li>)}</ul></details>}</span><em>{it.price}</em></li>)}</ul>
           </div>))}
         </div>
