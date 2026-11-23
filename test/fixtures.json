@@ -235,7 +235,9 @@
     }
    ],
    "sort": 0,
-   "active": true
+   "active": true,
+   "price_half": 5000,
+   "cost_half": 1905
   },
   {
    "id": "live-three",
@@ -287,7 +289,9 @@
     }
    ],
    "sort": 1,
-   "active": true
+   "active": true,
+   "price_half": 11000,
+   "cost_half": 3700
   },
   {
    "id": "video-video",
@@ -327,7 +331,9 @@
     }
    ],
    "sort": 0,
-   "active": true
+   "active": true,
+   "price_half": 3500,
+   "cost_half": 2175
   },
   {
    "id": "photo-photo",
@@ -367,7 +373,9 @@
     }
    ],
    "sort": 0,
-   "active": true
+   "active": true,
+   "price_half": 3500,
+   "cost_half": 2175
   },
   {
    "id": "pod-pod",
@@ -407,7 +415,9 @@
     }
    ],
    "sort": 0,
-   "active": true
+   "active": true,
+   "price_half": 3500,
+   "cost_half": 1885
   }
  ],
  "extras": [

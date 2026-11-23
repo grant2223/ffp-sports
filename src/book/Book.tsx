@@ -113,9 +113,12 @@ function Flow({ cat, st, put, gear, free, sending, err, onSend }: {
   const nextTxt = st.step === 6 ? (sending ? "Sending…" : "Send booking request") : "Continue";
 
   const services = [...cat.services.map((s) => ({ id: s.id, name: s.name, strap: s.strap, img: s.img })), { id: "gear", name: "Gear rental", strap: "Cameras and kits, run it yourself", img: "/img/stadiumcam.jpg" }];
-  const durList: [Dur, string, string, number][] = pk ? [["2h", "Up to 2 hours", "One match or session. Set-up time is free", pk.price_2h], ["day", "Full day", "Up to 8 hours. Set-up time is free", pk.price_day]] : [];
+  const hasHalf = !!pk && pk.price_half !== null && pk.price_half !== undefined;
+  const durList: [Dur, string, string, number][] = pk ? [["2h", "Up to 2 hours", "One match or session. Set-up time is free", pk.price_2h],
+    ...(hasHalf ? [["half", "Half day", "Up to 4 hours. Set-up time is free", Number(pk.price_half)] as [Dur, string, string, number]] : []),
+    ["day", "Full day", "Up to 8 hours. Set-up time is free", pk.price_day]] : [];
   if (pk && sv?.season) { const m = Number(cat.settings.season_matches || 10), off = Number(cat.settings.season_off || 0.15); durList.push(["season", "Season", `${m} matches, save ${Math.round(off * 100)}%`, pk.price_2h * m * (1 - off)]); }
-  const addPrice = (e: (typeof adds)[number]) => (e.per_crew_hour ? Number(cat.settings.extra_hour_client || 750) * Math.max(1, p.crew) : st.dur === "day" ? e.price_day : e.price_2h);
+  const addPrice = (e: (typeof adds)[number]) => (e.per_crew_hour ? Number(cat.settings.extra_hour_client || 750) * Math.max(1, p.crew) : st.dur === "day" ? e.price_day : st.dur === "half" ? Number(e.price_half ?? e.price_day) : e.price_2h);
   const qty = (id: string) => st.qty[id] || 0;
   const setQ = (id: string, units: number, delta: number) => put({ qty: { ...st.qty, [id]: Math.max(0, Math.min(units, qty(id) + delta)) } });
   const toggle = (list: string[], id: string) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]);
@@ -128,13 +131,13 @@ function Flow({ cat, st, put, gear, free, sending, err, onSend }: {
   const svcRoles = sv ? new Set(cat.serviceRoles.filter((r) => r.service_id === sv.id).map((r) => r.role_id)) : new Set<string>();
   const crewRoles = cat.roles.filter((r) => svcRoles.has(r.id));
   const cq = st.crewq ?? {};
-  const roleRate = (r: { client_day: number }) => Math.round(Number(r.client_day) * (st.dur === "day" ? 1 : Number(cat.settings.crew_2h_share || 0.5)));
+  const roleRate = (r: { client_day: number }) => Math.round(Number(r.client_day) * (st.dur === "day" ? 1 : st.dur === "half" ? Number(cat.settings.crew_half_share || 0.7) : Number(cat.settings.crew_2h_share || 0.5)));
   const setCrew = (id: string, delta: number) => { const n = Math.max(0, Math.min(20, (cq[id] || 0) + delta)); const next = { ...cq }; if (n) next[id] = n; else delete next[id]; put({ crewq: next }); };
   const pickedCrew = crewRoles.filter((r) => cq[r.id]);
   const talentOn = crew && sv && ["live", "pod"].includes(sv.id);
   const tsel = st.talent ?? [];
   const pickedTalent = cat.talent.filter((t) => tsel.includes(talentKey(t)));
-  const durName = st.dur === "day" ? "full day" : st.dur === "season" ? "season" : "up to 2 hours";
+  const durName = st.dur === "day" ? "full day" : st.dur === "half" ? "half day" : st.dur === "season" ? "season" : "up to 2 hours";
   const payLines = gear ? (p.deposit ? [{ label: "Refundable deposit, paid with the rental", amt: aed(p.deposit) }] : [])
     : p.split ? [{ label: "To book, 50%", amt: aed(p.total / 2) }, { label: "Before the work starts, 50%", amt: aed(p.total / 2) }] : [];
   const rvAdds = crew ? [...(hasEdits && editObj ? ["Editing: " + editObj.name] : []), ...(editObj?.price_2h ? eadds.filter((a) => st.eon.includes(a.id)).map((a) => a.name) : []), ...adds.filter((a) => st.on.includes(a.id)).map((a) => a.name), ...pickedCrew.map((r) => (cq[r.id] > 1 ? cq[r.id] + " × " : "") + r.name), ...pickedTalent.map((t) => `${t.role_name}: ${t.first_name} ${t.last_name}`)].join(", ") || "None" : st.setup ? "Set-up and handover" : "None";
@@ -178,7 +181,7 @@ function Flow({ cat, st, put, gear, free, sending, err, onSend }: {
                 </div></div>
                 : <div className="blk"><div className="qo" style={{ cursor: "default" }}><img src={pk.img} alt="" /><span className="qt"><b>{pk.name}</b><small>{pk.strap}</small></span></div></div>}
               <div className="blk"><p className="ql">How long?</p>
-                <div className="qos c3" role="radiogroup" aria-label="Length">
+                <div className={"qos c3" + (durList.length > 3 ? " n4" : "")} role="radiogroup" aria-label="Length">
                   {durList.map(([k, n, l, pr]) => <button key={k} className={"qo qd" + (st.durSet && st.dur === k ? " on" : "")} type="button" role="radio" aria-checked={st.durSet && st.dur === k} onClick={() => put({ dur: k, durSet: true })}>
                     <span className="qt"><b>{n}</b><small>{l}</small></span><em>{aed(pr)}</em></button>)}
                 </div></div>
@@ -226,7 +229,7 @@ function Flow({ cat, st, put, gear, free, sending, err, onSend }: {
                   {crew && adds.map((a) => <AddRow key={a.id} name={a.name} strap={a.strap} price={addPrice(a)} details={a.details} suffix={st.dur === "season" ? " a match" : ""} on={st.on.includes(a.id)} toggle={() => toggleAdd(a.id)} />)}
                   {gear && <AddRow name="Set-up and handover" strap="An FFP operator sets everything up at your venue and shows your team how to run it." price={Number(cat.settings.setup_handover || 1000)} on={st.setup} toggle={() => put({ setup: !st.setup })} />}
                 </div></div>
-              {crew && crewRoles.length > 0 && <div className="blk crw"><p className="ql">Extra crew<span className="cnote">{st.dur === "day" ? "Day rates" : st.dur === "season" ? "Per match" : "Up to 2 hours"}</span></p>
+              {crew && crewRoles.length > 0 && <div className="blk crw"><p className="ql">Extra crew<span className="cnote">{st.dur === "day" ? "Day rates" : st.dur === "half" ? "Half day" : st.dur === "season" ? "Per match" : "Up to 2 hours"}</span></p>
                 <input className="crw-add" list="crew-roles" placeholder="Search crew roles, e.g. camera operator" value="" onChange={(e) => { const r = crewRoles.find((x) => x.name === e.target.value); if (r) setCrew(r.id, 1); }} />
                 <datalist id="crew-roles">{crewRoles.filter((r) => !cq[r.id]).map((r) => <option key={r.id} value={r.name}>{cat.roleGroups.find((g) => g.id === r.group_id)?.name}</option>)}</datalist>
                 {pickedCrew.some((r) => r.group_id === "cameras" && r.id !== "camera-assistant") && <p className="cnote2">Camera operators come without a camera. Add a camera from the add-ons above.</p>}

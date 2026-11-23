@@ -63,7 +63,7 @@ function QuoteEditor({ id, onClose }: { id: string; onClose: () => void }) {
   const priceList = useMemo(() => {
     if (!cat) return [] as [string, QLine][];
     const L: [string, QLine][] = [];
-    for (const p of cat.packages) { const s = cat.services.find((x) => x.id === p.service_id)?.name; L.push([`${s}: ${p.name}, 2 hours`, { desc: `${s}, ${p.name}, up to 2 hours`, qty: 1, unit: p.price_2h, cost: p.cost_2h }], [`${s}: ${p.name}, full day`, { desc: `${s}, ${p.name}, full day`, qty: 1, unit: p.price_day, cost: p.cost_day }]); }
+    for (const p of cat.packages) { const s = cat.services.find((x) => x.id === p.service_id)?.name; L.push([`${s}: ${p.name}, 2 hours`, { desc: `${s}, ${p.name}, up to 2 hours`, qty: 1, unit: p.price_2h, cost: p.cost_2h }], ...(p.price_half ? [[`${s}: ${p.name}, half day`, { desc: `${s}, ${p.name}, half day, up to 4 hours`, qty: 1, unit: Number(p.price_half), cost: Number(p.cost_half ?? p.cost_day) }] as [string, QLine]] : []), [`${s}: ${p.name}, full day`, { desc: `${s}, ${p.name}, full day`, qty: 1, unit: p.price_day, cost: p.cost_day }]); }
     for (const e of cat.extras) { const s = cat.services.find((x) => x.id === e.service_id)?.name; if (e.per_crew_hour) L.push([`${s}: Extra hour, per crew`, { desc: "Extra hour, per crew member", qty: 1, unit: Number(cat.settings.extra_hour_client || 750), cost: Number(cat.settings.extra_hour_cost || 400) }]);
       else if (e.price_day || e.price_2h) L.push([`${s}: ${e.name}`, { desc: e.name, note: e.strap, qty: 1, unit: e.price_day || e.price_2h, cost: e.cost_day || e.cost_2h }]); }
     for (const g of cat.gear) L.push([`Gear: ${g.name}, per day`, { desc: g.name + " rental", note: g.strap, qty: 1, days: 1, unit: g.price_day, cost: 0 }]);

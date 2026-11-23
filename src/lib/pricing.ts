@@ -2,8 +2,8 @@
 // src/lib/pricing.ts is the source; scripts/sync.sh copies it to supabase/functions/api/pricing.ts.
 
 export interface Service { id: string; name: string; strap: string; img: string; gearable: boolean; season: boolean; editing: boolean; sort: number; active: boolean }
-export interface Pkg { id: string; service_id: string; name: string; strap: string; img: string; crew: number; price_2h: number; price_day: number; cost_2h: number; cost_day: number; items: { t: string; d: string }[]; sort: number; active: boolean }
-export interface Extra { id: string; service_id: string; kind: "addon" | "edit_level" | "edit_extra"; name: string; strap: string; img: string; price_2h: number; price_day: number; cost_2h: number; cost_day: number; per_crew_hour: boolean; adds_crew: number; pick_group: string | null; sort: number; active: boolean; details?: string[] }
+export interface Pkg { id: string; service_id: string; name: string; strap: string; img: string; crew: number; price_2h: number; price_day: number; cost_2h: number; cost_day: number; price_half?: number | null; cost_half?: number | null; items: { t: string; d: string }[]; sort: number; active: boolean }
+export interface Extra { id: string; service_id: string; kind: "addon" | "edit_level" | "edit_extra"; name: string; strap: string; img: string; price_2h: number; price_day: number; cost_2h: number; cost_day: number; price_half?: number | null; cost_half?: number | null; per_crew_hour: boolean; adds_crew: number; pick_group: string | null; sort: number; active: boolean; details?: string[] }
 export interface Gear { id: string; kind: "kit" | "item"; name: string; strap: string; detail: string; img: string; price_day: number; units: number; deposit: number; specs?: string[]; best?: string; supply?: string; sort: number; active: boolean }
 export interface Zone { id: string; name: string; travel_per_crew: number; delivery: number; sort: number }
 export interface Role { id: string; group_id: string; name: string; client_day: number; cost_day?: number; sort: number; active: boolean }
@@ -13,7 +13,9 @@ export interface Catalogue { services: Service[]; packages: Pkg[]; extras: Extra
   roles: Role[]; roleGroups: RoleGroup[]; serviceRoles: { service_id: string; role_id: string; sort: number }[]; talent: Talent[] }
 export const talentKey = (t: { staff_id: string; role_id: string }) => t.staff_id + ":" + t.role_id;
 
-export type Dur = "2h" | "day" | "season";
+export type Dur = "2h" | "half" | "day" | "season";
+// half day: up to 4 hours. Falls back to the full-day figure where no half-day price is set.
+const halfOf = (half: number | null | undefined, day: number) => (half === null || half === undefined || isNaN(Number(half)) ? Number(day) : Number(half));
 export interface Choices {
   svc: string; mode: "crew" | "gear";
   pk: string; dur: Dur;
@@ -60,14 +62,14 @@ export function price(cat: Catalogue, c: Choices, code: number | Code = 0): Pric
     if (pk) {
       const matches = num(S.season_matches, 10), off = num(S.season_off, 0.15);
       const mult = c.dur === "season" ? matches : 1;
-      const dayRate = c.dur === "day";
-      const pPrice = dayRate ? pk.price_day : c.dur === "season" ? pk.price_2h * matches * (1 - off) : pk.price_2h;
-      cost += dayRate ? pk.cost_day : pk.cost_2h * mult;
-      const durName = dayRate ? "full day" : c.dur === "season" ? `season of ${matches} matches` : "up to 2 hours";
+      const dayRate = c.dur === "day", half = c.dur === "half" && pk.price_half !== null && pk.price_half !== undefined;
+      const pPrice = dayRate ? pk.price_day : half ? halfOf(pk.price_half, pk.price_day) : c.dur === "season" ? pk.price_2h * matches * (1 - off) : pk.price_2h;
+      cost += dayRate ? pk.cost_day : half ? halfOf(pk.cost_half, pk.cost_day) : pk.cost_2h * mult;
+      const durName = dayRate ? "full day" : half ? "half day, up to 4 hours" : c.dur === "season" ? `season of ${matches} matches` : "up to 2 hours";
       lines.push({ label: `${pk.name}, ${durName}`, v: pPrice }); sub += pPrice;
       crew = pk.crew;
       // extra crew by role: a day rate, half of it for up to 2 hours, per match on a season
-      const roleFactor = dayRate ? 1 : num(S.crew_2h_share, 0.5);
+      const roleFactor = dayRate ? 1 : half ? num(S.crew_half_share, 0.7) : num(S.crew_2h_share, 0.5);
       const allowed = new Set(cat.serviceRoles.filter((r) => r.service_id === svc.id).map((r) => r.role_id));
       for (const r of cat.roles.filter((x) => x.active && allowed.has(x.id)).sort((a, b) => a.sort - b.sort)) {
         const q = Math.max(0, Math.min(20, Math.floor(c.crewq?.[r.id] || 0)));
@@ -86,8 +88,8 @@ export function price(cat: Catalogue, c: Choices, code: number | Code = 0): Pric
       const groups = new Set<string>();
       for (const e of cat.extras.filter((x) => x.service_id === svc.id && x.kind === "addon" && c.on.includes(x.id)).sort((a, b) => a.sort - b.sort)) {
         if (e.pick_group) { if (groups.has(e.pick_group)) continue; groups.add(e.pick_group); }
-        const per = e.per_crew_hour ? num(S.extra_hour_client, 750) * crew : dayRate ? e.price_day : e.price_2h;
-        const pc = e.per_crew_hour ? num(S.extra_hour_cost, 400) * crew : dayRate ? e.cost_day : e.cost_2h;
+        const per = e.per_crew_hour ? num(S.extra_hour_client, 750) * crew : dayRate ? e.price_day : half ? halfOf(e.price_half, e.price_day) : e.price_2h;
+        const pc = e.per_crew_hour ? num(S.extra_hour_cost, 400) * crew : dayRate ? e.cost_day : half ? halfOf(e.cost_half, e.cost_day) : e.cost_2h;
         lines.push({ label: e.name + (mult > 1 ? `, ${matches} matches` : ""), v: per * mult }); sub += per * mult; cost += pc * mult; crew += e.adds_crew;
       }
       if (svc.editing && c.edit) {

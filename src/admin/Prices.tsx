@@ -23,11 +23,11 @@ export function Prices() {
         <p className="grp">Packages</p>
         <EditTable table="packages" rows={pk.filter((p) => p.service_id === s.id)} onSaved={load} cols={[
           { k: "name", label: "Name" }, { k: "strap", label: "Short line" }, { k: "crew", label: "Crew", type: "num", w: 80 },
-          { k: "price_2h", label: "2 hours", type: "num", w: 110 }, { k: "price_day", label: "Full day", type: "num", w: 110 }, { k: "cost_2h", label: "Cost 2 h", type: "num", w: 110 }, { k: "cost_day", label: "Cost day", type: "num", w: 110 }]} />
+          { k: "price_2h", label: "2 hours", type: "num", w: 110 }, { k: "price_half", label: "Half day", type: "num", w: 110 }, { k: "price_day", label: "Full day", type: "num", w: 110 }, { k: "cost_2h", label: "Cost 2 h", type: "num", w: 110 }, { k: "cost_half", label: "Cost half", type: "num", w: 110 }, { k: "cost_day", label: "Cost day", type: "num", w: 110 }]} />
         {Object.entries(KIND).map(([k, l]) => { const rows = ex.filter((e) => e.service_id === s.id && e.kind === k); return rows.length ? <div key={k}><p className="grp">{l}</p>
           <EditTable table="extras" rows={rows} onSaved={load} cols={[
             { k: "name", label: "Name" }, { k: "strap", label: "Short line" },
-            ...(k === "addon" ? [{ k: "price_2h", label: "With 2 hours", type: "num" as const, w: 120 }, { k: "price_day", label: "With full day", type: "num" as const, w: 120 }, { k: "cost_2h", label: "Cost 2 h", type: "num" as const, w: 110 }, { k: "cost_day", label: "Cost day", type: "num" as const, w: 110 }]
+            ...(k === "addon" ? [{ k: "price_2h", label: "With 2 hours", type: "num" as const, w: 120 }, { k: "price_half", label: "With half day", type: "num" as const, w: 120 }, { k: "price_day", label: "With full day", type: "num" as const, w: 120 }, { k: "cost_2h", label: "Cost 2 h", type: "num" as const, w: 110 }, { k: "cost_half", label: "Cost half", type: "num" as const, w: 110 }, { k: "cost_day", label: "Cost day", type: "num" as const, w: 110 }]
               : [{ k: "price_2h", label: "Price", type: "num" as const, w: 120 }, { k: "cost_2h", label: "Cost", type: "num" as const, w: 120 }]),
             { k: "active", label: "Offered", type: "bool", w: 100 }]} /></div> : null; })}
       </div>)}
