@@ -177,7 +177,7 @@
     },
     {
      "q": "Do we keep the recording?",
-     "a": "Yes. The full recording is yours. Download link within 24 hours."
+     "a": "Yes. The full recording is yours, on the day to your hard drive or SD card, or sent online within 24 hours."
     },
     {
      "q": "What about several courts or a multi-day tournament?",
@@ -193,7 +193,7 @@
    "sub": "Filmed at your match or event, edited and ready to post.",
    "hero": "/img/poolcam.jpg",
    "heroAlt": "Camera filming at a swimming championship",
-   "card": "Your match or event on film, in 4K.",
+   "card": "Your match or event on film.",
    "baseLine": "Every video booking. Book 2 hours for one match, or a full day for an event.",
    "pkgs": [
     {
@@ -219,7 +219,7 @@
       },
       {
        "t": "All your footage",
-       "d": "Download link within 48 hours."
+       "d": "On the day to your hard drive or SD card, or sent online within 24 hours."
       },
       {
        "t": "Yours to use",
@@ -258,7 +258,7 @@
    "faqs": [
     {
      "q": "How long until I get my footage?",
-     "a": "All raw footage within 48 hours. Edited films within 5 days."
+     "a": "On the day, if you give us a hard drive or SD card. Otherwise we send it by online transfer as soon as filming ends: usually within a few hours, and within 24 hours at most, depending on the file size. Edited films follow within 5 days."
     },
     {
      "q": "Is the footage edited?",
@@ -266,7 +266,7 @@
     },
     {
      "q": "What format do I get?",
-     "a": "4K MP4 files by download link. Social clips come in vertical format for Instagram, TikTok and Reels."
+     "a": "Sent in the format you ask for."
     },
     {
      "q": "Can you film interviews on the day?",
@@ -424,7 +424,7 @@
      "items": [
       {
        "t": "3 cameras",
-       "d": "Three angles in 4K, ready for YouTube."
+       "d": "Three camera angles, ready for YouTube."
       },
       {
        "t": "Shure MV7+ microphones",
@@ -444,7 +444,7 @@
       },
       {
        "t": "All files",
-       "d": "Audio and video, download link within 48 hours."
+       "d": "Audio and video, on the day to your hard drive or SD card, or sent online within 24 hours."
       }
      ]
     }
@@ -494,7 +494,7 @@
     },
     {
      "q": "Do we get video as well as audio?",
-     "a": "Yes. You get the audio and all three camera angles."
+     "a": "Yes. You get the audio and all three camera angles, on the day to your hard drive or SD card, or sent online within 24 hours."
     },
     {
      "q": "Can you edit and publish it for us?",

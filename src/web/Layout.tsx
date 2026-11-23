@@ -53,7 +53,7 @@ export function Trust({ items }: { items: [string, string][] }) {
 
 export function Faq({ title = "Questions", items }: { title?: string; items: { q: string; a: string }[] }) {
   return <section className="fs-sec"><div className="fs-wrap fs-faq">
-    <div><h2 className="fs-h2">{title}</h2><p className="fs-sub">Anything else, email info@findfitpeople.com.</p></div>
+    <div><h2 className="fs-h2">{title}</h2></div>
     <div>{items.map((f) => <details key={f.q}><summary>{f.q}{I.down({ s: 20 })}</summary><p>{f.a}</p></details>)}</div>
   </div></section>;
 }

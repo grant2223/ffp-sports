@@ -31,7 +31,7 @@ export const PACKS: Record<string, Pack[]> = {
   video: [
     { id: "video-highlights", name: "Highlights film", best: "The best moments of your match or event, cut to music.", per: "2 hours filming",
       visual: { kind: "film", img: "/img/flag.jpg", dur: "2:30" },
-      gets: [{ v: "2–3 min", t: "Highlights film with music and titles" }, { v: "4K", t: "All raw footage, to keep and reuse" },
+      gets: [{ v: "2–3 min", t: "Highlights film with music and titles" }, { v: "Raw", t: "All raw footage, to keep and reuse" },
         { v: "1", t: "Round of changes after you watch it" }, { v: "5 days", t: "Delivered by download link" }] },
     { id: "video-interviews", name: "Interviews", best: "Players, coaches and guests on camera, ready to share.", per: "2 hours filming",
       visual: { kind: "interview", img: "/img/b-8f0ec58048090ca3eb10fb0297b161d4.jpg", name: "Player name", role: "Captain" },
@@ -44,7 +44,7 @@ export const PACKS: Record<string, Pack[]> = {
     { id: "video-stories", name: "Live stories", best: "Your event on Instagram while it happens.", per: "2 hours on site",
       visual: { kind: "stories", imgs: ["/img/fans.jpg", "/img/flag.jpg", "/img/race.jpg"] },
       gets: [{ v: "10+", t: "Stories posted during the event" }, { v: "2", t: "Reels posted the same day" },
-        { v: "Live", t: "Posted from your account, or sent to you to post" }, { v: "4K", t: "All raw footage afterwards" }] },
+        { v: "Live", t: "Posted from your account, or sent to you to post" }, { v: "Raw", t: "All raw footage afterwards" }] },
   ],
   photo: [
     { id: "photo-match", name: "Match photos", best: "Every key moment of one match.", per: "2 hours on site",
@@ -64,13 +64,13 @@ export const PACKS: Record<string, Pack[]> = {
     { id: "pod-record", name: "Recorded podcast", best: "We bring the full set to your venue and record the episode.", per: "up to 2 hours", day: true,
       visual: { kind: "files", img: "/img/pod.jpg" },
       gets: [{ v: "Set", t: "3 cameras, 4 Shure MV7+ mics and lights, set up and packed away" }, { v: "Cut", t: "Program cut: the switched multi-camera version" },
-        { v: "3", t: "Recordings, one from each camera, in 4K" }, { v: "4", t: "Separate audio files, one per mic (WAV)" },
-        { v: "Mix", t: "Mixed audio file, all voices balanced (WAV and MP3)" }, { v: "48 hrs", t: "Every file by download link" }] },
+        { v: "3", t: "Recordings, one from each camera" }, { v: "4", t: "Separate audio files, one per mic" },
+        { v: "Mix", t: "Mixed audio file, all voices balanced" }, { v: "24 hrs", t: "Every file sent online, or on the day to your drive or SD card" }] },
     { id: "pod-live", name: "Live podcast", best: "The same set, streamed live while you record.", per: "up to 2 hours", day: true, popular: true,
       visual: { kind: "stream", img: "/img/pod.jpg" },
       gets: [{ v: "Live", t: "On YouTube and Facebook as you record, switched live by our producer" }, { v: "Set", t: "3 cameras, 4 Shure MV7+ mics and lights, set up and packed away" },
-        { v: "Cut", t: "Program cut: the switched version of the stream" }, { v: "3", t: "Recordings, one from each camera, in 4K" },
-        { v: "Audio", t: "Separate audio per mic (WAV), plus a mixed file (WAV and MP3)" }, { v: "48 hrs", t: "Every file by download link" }] },
+        { v: "Cut", t: "Program cut: the switched version of the stream" }, { v: "3", t: "Recordings, one from each camera" },
+        { v: "Audio", t: "Separate audio per mic, plus a mixed file" }, { v: "24 hrs", t: "Every file sent online, or on the day to your drive or SD card" }] },
   ],
 };
 // Podcast extras, grouped. Prices match the booking engine (gear day rates, crew rates, editing prices).
