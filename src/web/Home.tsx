@@ -3,7 +3,6 @@ import { I } from "./Icons";
 import { CtaBand, Faq, Page, SVC_PATH, Trust, link } from "./Layout";
 import C from "./content.json";
 
-const MOSAIC = ["/img/stadiumcam.jpg", "/img/gfxplayer.jpg", "/img/desk.jpg", "/img/flag.jpg", "/img/fans.jpg", "/img/poolcam.jpg", "/img/pod.jpg", "/img/gymcam.jpg"];
 
 export function Theatre() {
   const [i, setI] = useState(0);
@@ -26,17 +25,18 @@ export function Theatre() {
 export function Home() {
   return (
     <Page>
-      <section className="fs-hero"><div className="fs-wrap fs-hero-in">
-        <div>
-          <h1 style={{ marginTop: 0 }}>Livestream, video and photos for your sport.</h1>
+      <section className="fs-hero">
+        <img className="fs-hero-img" src="/img/stadiumcam.jpg" alt="" aria-hidden="true" />
+        <div className="fs-wrap fs-hero-in"><div className="fs-hero-txt">
+          <span className="fs-eyebrow">Sports media, UAE</span>
+          <h1>Livestream, video and photos for your sport.</h1>
           <p className="lead">Plus podcasts and gear rental, for clubs, leagues and events across the UAE. See your price and book in two minutes.</p>
           <div className="fs-ctas">
             <a className="fs-btn y" href="/book" onClick={link("/book")}>Book now {I.arrow({ s: 20 })}</a>
             <a className="fs-btn w" href="/estimate" onClick={link("/estimate")}>Get an estimate</a>
           </div>
-        </div>
-        <div className="fs-mosaic" aria-hidden="true">{MOSAIC.map((m) => <img key={m} src={m} alt="" />)}</div>
-      </div></section>
+        </div></div>
+      </section>
 
       <Trust items={[["Your price, up front", "See exactly what it costs before you book."], ["Confirmed before you pay", "We check the crew and gear for your date first."],
         ["All seven emirates", "Dubai, Abu Dhabi, Sharjah and the north."], ["Yours to keep", "Every recording, film and photo, to use anywhere."]]} />
